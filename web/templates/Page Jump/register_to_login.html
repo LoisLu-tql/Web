@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>跳转页面</title>
+    <script>
+        window.onload = function(){
+            var remaining_time = 2 ;
+            var timer1 = setInterval(function(){
+                if(remaining_time > 0) document.getElementById("jump_time").innerText = remaining_time ;
+                else location.href = "/login/" ;
+                remaining_time -- ;
+            }, 1000)
+        }
+    </script>
+</head>
+<body>
+    <p>注册成功！还有<span id="jump_time">3</span>秒跳转到登录页面...</p>
+</body>
+</html>

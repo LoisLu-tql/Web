@@ -1,0 +1,20 @@
+{% extends 'UserManager/base_user.html' %}
+
+{% block content %}
+    <h3>我的粉丝</h3><br>
+    <ul>
+        {% for fan in fans %}
+            <li>
+{#                <div>粉丝头像</div>#}
+                <style>#icon{width:40px; height: 40px; border-radius: 50%}</style>
+                <img id="icon" src="/static/uploadfiles/{{ fan.icon }}" alt="icon">
+                <a href="{% url 'app1:his_home' fan.id%}">{{ fan.name }}</a>
+                {% comment %}<div>{{ fan.name }}</div>{% endcomment %}
+                <hr>
+            </li>
+        {% empty %}
+            <li>您目前还没有粉丝哦~</li>
+        {% endfor %}
+    </ul>
+
+{% endblock %}

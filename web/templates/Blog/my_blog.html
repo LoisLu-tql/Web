@@ -1,0 +1,16 @@
+{% extends 'Blog/base_blog.html' %}
+
+{% block content %}
+
+    {% for article in articles %}
+        <li>
+            <a href="{% url 'app1:show_article' article_id=article.id %}">
+                <h4>{{ article.title }}</h4>
+                <div>{{ article.content }}</div>
+            </a>
+        </li>
+    {% empty %}
+        <li>No blogs!</li>
+    {% endfor %}
+
+{% endblock %}

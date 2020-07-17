@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h3>我收藏的讨论</h3><br>
+    <ul>
+        {% for discussion in discussions %}
+            <li>
+                <div><a href="{% url 'app1:show_discussion' discussion_id=discussion.id %}">{{ discussion.title }}</a></div>
+                <hr>
+            </li>
+            {% empty %}
+            <li>您还没有收藏任何问题哦~</li>
+        {% endfor %}
+    </ul>
+
+{% endblock %}

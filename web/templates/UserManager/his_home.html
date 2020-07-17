@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block content %}
+    <style>#icon{width: 200px; height: 200px; border-radius: 50%}</style>
+    <style>#sex{width: 30px; height: 30px; border-radius: 50%; top:360px; left:200px; position: absolute}</style>
+    <h1>{{ user.name }}</h1>
+    <img id="icon" src="{{ icon_url }}" alt="icon">
+    {% if user.sex == 1 %}
+        <img id="sex" src="/static/uploadfiles/system/male.png" alt="sex">
+    {% elif user.sex == 2 %}
+        <img id="sex" src="/static/uploadfiles/system/female.png" alt="sex">
+    {% endif %}
+    <h4>{{ user.motto }}</h4>
+
+    <span id="like" star_id="{{ user.id }}" fan_id="{{ me.id }}">关注</span>
+    <span id="unlike" star_id="{{ user.id }}" fan_id="{{ me.id }}">取消关注</span>
+    <span id="AttentionHint"></span>
+
+    <ul>
+        <li><a href="{% url 'app1:his_blog' user.id %}">{{ user.name }}的博客</a></li>
+        <li><a href="{% url 'app1:his_discussion' user.id %}">{{ user.name }}的讨论</a></li>
+        <li><a href="{% url 'app1:his_fans' user.id %}">{{ user.name }}的粉丝</a></li>
+        <li><a href="{% url 'app1:his_idols' user.id %}">{{ user.name }}的关注</a></li>
+    </ul>
+{% endblock %}
+
+{% block js_code %}
+    {{ block.super }}
+    <script type="text/javascript" src="{% static 'js/my_js/UserManager/add_user.js' %}"></script>
+{% endblock %}

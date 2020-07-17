@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <ul>
+        {% for discussion in discussions %}
+            <li><a href="{% url 'app1:show_discussion' discussion_id=discussion.id %}">{{ discussion.title }}</a></li>
+        {% empty %}
+            <li>No discussion!</li>
+        {% endfor %}
+    </ul>
+{% endblock %}

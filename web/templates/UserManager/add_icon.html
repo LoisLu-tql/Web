@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <form action="{% url 'app1:add_icon' %}" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <input type="file" name="icon"> <br>
+        <button>上传</button>
+    </form>
+{% endblock %}

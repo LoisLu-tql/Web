@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block content %}
+    <h3>搜索您想要关注的用户..</h3><br>
+    <form action="{% url 'app1:search_user' %}" method="post">
+        {% csrf_token %}
+        <div class="searcher">
+            <input type="text" name="search_ob" placeholder="请输入用户名或邮箱...">
+            <button>Search</button>
+        </div>
+    </form>
+
+    <h4>搜索结果</h4>
+    <ul>
+        {% for aim_user in aim_users %}
+            <li><style>#icon{width:40px; height: 40px; border-radius: 50%}</style>
+            <img id="icon" src="/static/uploadfiles/{{ aim_user.icon }}" alt="icon">
+                <a href="{% url 'app1:his_home' person_id=aim_user.id %}">{{ aim_user.name }}</a></li>
+        {% empty %}
+            <span>没有找到此用户..</span>
+        {% endfor %}
+    </ul>
+{% endblock %}
+

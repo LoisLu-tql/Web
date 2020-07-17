@@ -1,0 +1,86 @@
+*** Starting uWSGI 2.0.18 (64bit) on [Tue May 12 22:04:03 2020] ***
+compiled with version: 7.5.0 on 12 May 2020 14:03:20
+os: Linux-5.3.0-51-generic #44~18.04.2-Ubuntu SMP Thu Apr 23 14:27:18 UTC 2020
+nodename: zubizakeli-VirtualBox
+machine: x86_64
+clock source: unix
+detected number of CPU cores: 1
+current working directory: /home/zubizakeli/z1
+writing pidfile to uwsgi.pid
+detected binary path: /home/zubizakeli/z1/11_env/bin/uwsgi
+!!! no internal routing support, rebuild with pcre support !!!
+chdir() to /home/zubizakeli/z1
+your processes number limit is 11781
+your memory page size is 4096 bytes
+detected max file descriptor number: 4096
+lock engine: pthread robust mutexes
+thunder lock: disabled (you can enable it with --thunder-lock)
+uWSGI http bound on 0.0.0.0:8888     # All people can connect fd 4
+uwsgi socket 0 bound to TCP address 127.0.0.1:42719 (port auto-assigned) fd 3
+Python version: 3.6.9 (default, Apr 18 2020, 01:56:04)  [GCC 8.4.0]
+Python main interpreter initialized at 0x5638d16a19e0
+python threads support enabled
+your server socket listen backlog is limited to 100 connections
+your mercy for graceful operations on workers is 60 seconds
+mapped 501072 bytes (489 KB) for 20 cores
+*** Operational MODE: preforking+threaded ***
+WSGI app 0 (mountpoint='') ready in 1 seconds on interpreter 0x5638d16a19e0 pid: 13886 (default app)
+*** uWSGI is running in multiple interpreter mode ***
+spawned uWSGI master process (pid: 13886)
+spawned uWSGI worker 1 (pid: 13888, cores: 10)
+spawned uWSGI worker 2 (pid: 13889, cores: 10)
+spawned uWSGI http 1 (pid: 13890)
+[pid: 13888|app: 0|req: 1/1] 127.0.0.1 () {38 vars in 696 bytes} [Tue May 12 14:12:14 2020] GET / => generated 669 bytes in 56 msecs (HTTP/1.1 200) 3 headers in 109 bytes (1 switches on core 0)
+[pid: 13888|app: 0|req: 2/2] 127.0.0.1 () {36 vars in 623 bytes} [Tue May 12 14:12:17 2020] GET /favicon.ico => generated 85 bytes in 10 msecs (HTTP/1.1 404) 3 headers in 100 bytes (1 switches on core 1)
+SIGINT/SIGQUIT received...killing workers...
+gateway "uWSGI http 1" has been buried (pid: 13890)
+worker 1 buried after 1 seconds
+worker 2 buried after 1 seconds
+goodbye to uWSGI.
+*** Starting uWSGI 2.0.18 (64bit) on [Tue May 12 22:20:18 2020] ***
+compiled with version: 7.5.0 on 12 May 2020 14:03:20
+os: Linux-5.3.0-51-generic #44~18.04.2-Ubuntu SMP Thu Apr 23 14:27:18 UTC 2020
+nodename: zubizakeli-VirtualBox
+machine: x86_64
+clock source: unix
+detected number of CPU cores: 1
+current working directory: /home/zubizakeli/z1
+writing pidfile to uwsgi.pid
+detected binary path: /home/zubizakeli/z1/11_env/bin/uwsgi
+!!! no internal routing support, rebuild with pcre support !!!
+chdir() to /home/zubizakeli/z1
+your processes number limit is 11781
+your memory page size is 4096 bytes
+detected max file descriptor number: 4096
+lock engine: pthread robust mutexes
+thunder lock: disabled (you can enable it with --thunder-lock)
+uwsgi socket 0 bound to TCP address 0.0.0.0:8888 fd 3
+Python version: 3.6.9 (default, Apr 18 2020, 01:56:04)  [GCC 8.4.0]
+Python main interpreter initialized at 0x5599948358e0
+python threads support enabled
+your server socket listen backlog is limited to 100 connections
+your mercy for graceful operations on workers is 60 seconds
+mapped 501072 bytes (489 KB) for 20 cores
+*** Operational MODE: preforking+threaded ***
+WSGI app 0 (mountpoint='') ready in 0 seconds on interpreter 0x5599948358e0 pid: 14092 (default app)
+*** uWSGI is running in multiple interpreter mode ***
+spawned uWSGI master process (pid: 14092)
+spawned uWSGI worker 1 (pid: 14094, cores: 10)
+spawned uWSGI worker 2 (pid: 14095, cores: 10)
+[pid: 14095|app: 0|req: 1/1] 127.0.0.1 () {42 vars in 705 bytes} [Tue May 12 14:21:05 2020] GET / => generated 669 bytes in 35 msecs (HTTP/1.1 200) 3 headers in 109 bytes (1 switches on core 0)
+[pid: 14095|app: 0|req: 2/2] 127.0.0.1 () {40 vars in 632 bytes} [Tue May 12 14:21:08 2020] GET /favicon.ico => generated 85 bytes in 2 msecs (HTTP/1.1 404) 3 headers in 100 bytes (1 switches on core 6)
+invalid request block size: 21573 (max 4096)...skip
+invalid request block size: 21573 (max 4096)...skip
+invalid request block size: 21573 (max 4096)...skip
+invalid request block size: 21573 (max 4096)...skip
+invalid request block size: 21573 (max 4096)...skip
+invalid request block size: 21573 (max 4096)...skip
+invalid request block size: 21573 (max 4096)...skip
+invalid request block size: 21573 (max 4096)...skip
+invalid request block size: 21573 (max 4096)...skip
+invalid request block size: 21573 (max 4096)...skip
+[pid: 14094|app: 0|req: 1/3] 127.0.0.1 () {42 vars in 705 bytes} [Tue May 12 14:21:15 2020] GET / => generated 669 bytes in 41 msecs (HTTP/1.1 200) 3 headers in 109 bytes (1 switches on core 0)
+SIGINT/SIGQUIT received...killing workers...
+worker 1 buried after 1 seconds
+worker 2 buried after 1 seconds
+goodbye to uWSGI.

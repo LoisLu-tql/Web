@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ title }}</title>
+    <link href="https://cdn.bootcss.com/twitter-bootstrap/3.3.7/css/bootstrap.css" rel="stylesheet">
+    {% load static %}
+    {% block css_code %}
+
+    {% endblock %}
+
+</head>
+<body>
+
+    {% block head %}
+{#        <h2>这是一个主页！</h2>#}
+    {% endblock %}
+
+    {% block content %}
+{#        <h2>目前还没有内容！</h2>#}
+    {% endblock %}
+
+    {% block footer %}
+{#        <h2>I'm a footer.</h2>#}
+    {% endblock %}
+
+
+    <script type="text/javascript" src="https://cdn.bootcss.com/jquery/1.11.1/jquery.js"></script>
+    <script type="text/javascript" src="https://cdn.bootcss.com/twitter-bootstrap/3.3.7/js/bootstrap.js"></script>
+
+    {% block js_code %}
+
+    {% endblock %}
+</body>
+</html>

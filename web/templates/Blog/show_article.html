@@ -1,0 +1,61 @@
+{% extends 'Blog/base_blog.html' %}
+
+{% load static %}
+
+{% block head %}
+    {{ block.super }}
+{% endblock %}
+
+{% block content %}
+    <h2>Title:{{ article.title }}</h2>
+    <hr>
+    <div>author：<a href="{% url 'app1:his_home' article.author.id %}">{{ article.author.name }}</a></div>
+    <hr>
+    <p>{{ article.content | safe }}</p>  {# 为解决html内容无法显示的问题，添加“safe”，但也使网站易被攻击 #}
+    <hr>
+
+{#    <input type="button" value="Delete" formtarget="_blank">#}
+{#    <button formtarget="_parent">删除</button>#}          {# 不知道有没有更好的写法，这样写好丑。。。 #}
+{#    <a href="{% url 'app:delete_article' article_id=article.id %}">删除</a>    {# kkk，早怎么没想到，一个a标签不就解决了嘛 #}
+    {% if is_author %}
+{#        <a href="{% url 'app1:delete_article' article_id=article.id %}">删除</a>#}
+        <a href="{% url 'app1:delete_article' article_id=article.id %}">删除</a>&nbsp;
+        <a href="{% url 'app1:edit_blog' article.id %}">编辑</a>
+        <br>
+    {% endif %}
+
+    {% if is_login %}
+{#        <span id="like" star_id="{{ article.owner.id }}" fan_id="{{ user.id }}">关注</span> &nbsp;&nbsp;&nbsp; <span>推荐</span>#}
+        <span id="like" star_id="{{ article.author.id }}" fan_id="{{ user.id }}">关注博主</span> &nbsp
+        <span id="recommend" article_id="{{ article.id }}" fan_id="{{ user.id }}" >{{ article.likes_num }}赞</span>&nbsp
+        <span id="mark" article_id="{{ article.id }}" fan_id="{{ user.id }}" >收藏</span>
+        <br> <span id="AttentionHint"></span>
+    {% endif %}
+
+    <hr>
+    {% if is_label %}
+        标签: {{ blog_label.label_1 }} {{ blog_label.label_2 }} {{ blog_label.label_3 }}
+    {% endif %}
+    <hr>
+    <h5><div><a href="{% url 'app1:add_article_comment' article_id=article.id %}">添加评论</a></div></h5>
+    <ul>
+        {% for comment in comments %}
+            <li>
+                <div>
+                    <a href="{% url 'app1:his_home' comment.owner.id %}">{{ comment.owner.name }}</a> <br>
+                    <p>{{ comment.content }}</p>
+                </div><br>
+            </li>
+        {% empty %}
+            <li>该文章目前还没有评论...</li>
+        {% endfor %}
+    </ul>
+
+
+
+{% endblock %}
+
+{% block js_code %}
+    {{ block.super }}
+    <script type="text/javascript" src="{% static 'js/my_js/blog/show_article.js' %}"></script>
+{% endblock %}

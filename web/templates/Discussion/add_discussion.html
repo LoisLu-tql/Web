@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <form action="{% url 'app1:add_discussion' %}" method="post">
+        {% csrf_token %}
+        <span>标题：</span> <input type="text" name="title"> <br>
+        <span>内容：</span> <textarea name="content"></textarea><br>
+        <span>添加标签,让你的问题被更多人看到!</span><br>
+        <input type="checkbox" value="1" name="item" onClick="onCheckBox(this)">习题求解
+        <input type="checkbox" value="2" name="item" onClick="onCheckBox(this)">寻物启事
+        <input type="checkbox" value="3" name="item" onClick="onCheckBox(this)">学习疑惑
+        <input type="checkbox" value="4" name="item" onClick="onCheckBox(this)">情感问题
+        <input type="checkbox" value="5" name="item" onClick="onCheckBox(this)">留学咨询
+        <br><button>发布</button>
+    </form>
+{% endblock %}
+
+{% block head %}
+    {{ block.super }}
+    <script type="text/javascript" src="/static/tiny_mce/tiny_mce.js"></script>
+    <script type="text/javascript">
+        tinyMCE.init({
+            "mode": "textareas",
+            "theme": "advanced",
+            "width": 800,
+            "height": 600,
+        })
+    </script>
+    <script language="javascript" type="text/javascript">
+    var maxChoices = 3;
+    var flag = 0;
+    function onCheckBox(checkbox) {
+        var items = document.getElementsByName("item");
+        if(checkbox.checked) {
+            flag ++;
+        }
+        else {
+            flag --;
+        }
+        if(flag < maxChoices) {
+            for(var i=0; i<items.length; i++) {
+                if(!items[i].checked) {
+                    items[i].disabled = false;
+                }
+            }
+        }
+        else {
+            for(var i=0; i<items.length; i++) {
+                if(!items[i].checked) {
+                    items[i].disabled = true;
+                }
+            }
+        }
+    }
+</script>
+{% endblock %}

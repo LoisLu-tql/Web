@@ -1,0 +1,24 @@
+{% extends 'Blog/base_blog.html' %}
+
+{% load static %}
+
+{% block head %}
+<script type="text/javascript" src="/static/tiny_mce/tiny_mce.js"></script>
+<script type="text/javascript">
+    tinyMCE.init({
+        "mode": "textareas",
+        "theme": "advanced",
+        "width": 800,
+        "height": 600,
+    })
+</script>
+{% endblock %}
+
+{% block content %}
+    <form action="{% url 'app1:edit_blog' article.id %}" method="post">
+        {% csrf_token %}
+        <span>标题：</span> <input type="text" name="title" value="{{ article.title }}"> <br>
+        <span>内容：</span> <textarea name="content">{{ article.content }}</textarea>
+        <button>发布</button>
+    </form>
+{% endblock %}

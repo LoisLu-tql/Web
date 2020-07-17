@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h3>搜索您想要关注的用户..</h3><br>
+    <form action="{% url 'app1:search_user' %}" method="post">
+        {% csrf_token %}
+        <div class="searcher">
+            <input type="text" name="search_ob" placeholder="请输入用户名或邮箱...">
+            <button>Search</button>
+        </div>
+    </form>
+{% endblock %}

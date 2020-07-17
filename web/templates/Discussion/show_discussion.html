@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block head %}
+    {{ block.super }}
+{% endblock %}
+
+{% block content %}
+    <h2>{{ discussion.title }}</h2>
+    <div>提问者：<a href="{% url 'app1:his_home' discussion.owner.id %}">{{ discussion.owner.name }}</a></div>
+    <hr>
+    <p>{{ discussion.content | safe }}</p>  {# 为解决html内容无法显示的问题，添加“safe”，但也使网站易被攻击 #}
+    <hr>
+
+    {% if is_author %}
+        <a href="{% url 'app1:delete_discussion' discussion_id=discussion.id %}">删除</a>
+    {% elif is_login %}
+        <span id="like" star_id="{{ discussion.owner.id }}" fan_id="{{ user.id }}">关注提问者</span> &nbsp
+        <span id="recommend" discussion_id="{{ discussion.id }}" fan_id="{{ user.id }}" >赞</span> &nbsp
+        <span id="mark" discussion_id="{{ discussion.id }}" fan_id="{{ user.id }}" >收藏</span>
+        <br> <span id="AttentionHint"></span>
+    {% endif %}
+
+    <hr>
+    {% if is_label %}
+        标签:
+        {% if discussion_label.label_1 == 1 or discussion_label.label_2 == 1 or discussion_label.label_3 == 1 %} 习题求解
+        {% endif %}
+        {% if discussion_label.label_1 == 2 or discussion_label.label_2 == 2 or discussion_label.label_3 == 2 %} 寻物启事
+        {% endif %}
+        {% if discussion_label.label_1 == 3 or discussion_label.label_2 == 3 or discussion_label.label_3 == 3 %} 学习疑惑
+        {% endif %}
+        {% if discussion_label.label_1 == 4 or discussion_label.label_2 == 4 or discussion_label.label_3 == 4 %} 情感问题
+        {% endif %}
+        {% if discussion_label.label_1 == 5 or discussion_label.label_2 == 5 or discussion_label.label_3 == 5 %} 留学咨询
+        {% endif %}
+    {% endif %}
+    <hr>
+    <h5><div><a href="{% url 'app1:add_discussion_comment' discussion_id=discussion.id %}">添加评论</a></div></h5>
+    <ul>
+        {% for comment in comments %}
+            <li>
+                <div>
+                    <span><a href="{% url 'app1:his_home' comment.owner.id %}">{{ comment.owner.name }}</a></span>
+                    <br>
+                    <p>{{ comment.content }}</p>{{ comment.likes_num }}
+                    <a href="{% url 'app1:recommend_discussion_response' comment.id user.id %}">
+                        点赞
+                    </a>&nbsp;&nbsp;
+                    <span><a href="{% url 'app1:delete_comment' comment.id %}">删除评论</a></span>
+                    <span id="AttentionHint2"></span>
+                </div><br>
+            </li>
+        {% empty %}
+            <li>该文章目前还没有评论...</li>
+        {% endfor %}
+    </ul>
+
+{% endblock %}
+
+{% block js_code %}
+    {{ block.super }}
+    <script type="text/javascript" src="{% static 'js/my_js/discussion/show_discussion.js' %}"></script>
+{% endblock %}

@@ -1,0 +1,54 @@
+{% extends 'base_null.html' %}
+
+{% load static %}
+
+{% block content %}
+    <div id='login-box'>
+        <h1>Register</h1>
+        <form action="{% url 'app1:register' %}" method="post" onsubmit="return check()">  <!-- !!! -->
+            {% csrf_token %}
+            <div class="item">
+                <i class="fa fa-user-circle-o" aria-hidden="true"></i>
+                <input type="text" id="username" name="username" placeholder='username'>
+                <br>
+                <span id="username_info"></span>
+            </div>
+            <div class="item">
+                <i class="fa fa-key" aria-hidden="true"></i>
+                <input type="password" name="password" placeholder='password'>
+            </div>
+
+            <div class="item">
+                <i class="fa fa-shield" aria-hidden="true"></i>
+                <input type="text" name="verify_code" placeholder="verify_code">
+            </div>
+            <img id="verify_code" src="{% url 'app1:get_verify_code' %}" alt="verify_code">
+            <button>Submit</button>
+        </form>
+
+    </div>
+{% endblock %}
+
+{% block css_code %}
+    <link rel="stylesheet" href="/static/css/register.css">
+    <link rel="stylesheet" href="/static/css/font-awesome.css">
+    <style type="text/css">
+        #verify_code {
+            top: 500px ;
+            left: 1000px ;
+            position: absolute ;
+        }
+    </style>
+{% endblock %}
+
+{% block js_code %}
+    {{ block.super }}
+    <script type="text/javascript" src="{% static 'js/my_js/UserManager/register.js' %}"></script>
+    <script type="text/javascript">
+        // 验证码
+        var img = document.getElementById("verify_code");
+        img.onclick = function () {
+            this.src = "{% url 'app1:get_verify_code' %}?t=" + Math.random();
+        };
+    </script>
+{% endblock %}

@@ -1,0 +1,63 @@
+{% extends 'Blog/base_blog.html' %}
+
+{% load static %}
+{# 这个js要先加入，所以加在头部#}
+{% block head %}
+    <script type="text/javascript" src="/static/tiny_mce/tiny_mce.js"></script>
+    <script type="text/javascript">
+        tinyMCE.init({
+            "mode": "textareas",
+            "theme": "advanced",
+            "width": 800,
+            "height": 600,
+        })
+    </script>
+    <script language="javascript" type="text/javascript">
+    var maxChoices = 3;
+    var flag = 0;
+    function onCheckBox(checkbox) {
+        var items = document.getElementsByName("item");
+        if(checkbox.checked) {
+            flag ++;
+        }
+        else {
+            flag --;
+        }
+        if(flag < maxChoices) {
+            for(var i=0; i<items.length; i++) {
+                if(!items[i].checked) {
+                    items[i].disabled = false;
+                }
+            }
+        }
+        else {
+            for(var i=0; i<items.length; i++) {
+                if(!items[i].checked) {
+                    items[i].disabled = true;
+                }
+            }
+        }
+    }
+    </script>
+{% endblock %}
+
+{% block content %}
+    <form action="{% url 'app1:add_article' %}" method="post">
+        {% csrf_token %}
+        <span>标题：</span> <input type="text" name="title"> <br>
+        <span>内容：</span> <textarea name="content"></textarea><hr>
+        <span>添加标签,让你的文章被更多人看到!</span><br>
+        <span>学习</span><br>
+        <input type="checkbox" value="习题解答" name="item" onClick="onCheckBox(this)">习题解答
+        <input type="checkbox" value="数学建模" name="item" onClick="onCheckBox(this)">数学建模
+        <input type="checkbox" value="数据结构与算法" name="item" onClick="onCheckBox(this)">数据结构与算法
+        <input type="checkbox" value="学习资料" name="item" onClick="onCheckBox(this)">学习资料
+        <input type="checkbox" value="考研" name="item" onClick="onCheckBox(this)">考研
+        <br>
+        <span>生活</span><br>
+        <input type="checkbox" value="校园生活" name="item" onClick="onCheckBox(this)">校园生活
+        <input type="checkbox" value="经验分享" name="item" onClick="onCheckBox(this)">经验分享
+        <br>
+        <button>发布</button>
+    </form>
+{% endblock %}

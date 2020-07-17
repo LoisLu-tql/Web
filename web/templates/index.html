@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block head %}
+    <div>
+        <ul>
+            {% if have_user %}
+{#                <li><a href="{% url 'app1:home' %}">个人中心</a></li>#}
+            {% else %}
+                <li><a href="{% url 'app1:register' %}">注册</a></li>
+                <li><a href="{% url 'app1:login' %}">登录</a></li>
+            {% endif %}
+        </ul>
+    <hr>
+{% endblock %}
+
+{% block content %}
+    <div>
+        首页展示内容待定
+    </div>
+    <br>
+    <hr>
+{% endblock %}
+
+{% block footer %}
+    <div>
+        developed by : xxx
+    </div>
+{% endblock %}
+

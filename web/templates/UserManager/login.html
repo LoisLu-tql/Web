@@ -1,0 +1,35 @@
+{% extends 'base_null.html' %}
+
+{% load static %}
+
+{% block content %}
+    <div id='login-box'>
+        <h1>Login</h1>
+        <form action="{% url 'app1:login' %}" method="post">
+            {% csrf_token %}
+            <div class="item">
+                <i class="fa fa-user-circle-o" aria-hidden="true"></i>
+                <input type="text" name="username" placeholder='username'>
+            </div>
+            <div class="item">
+                <i class="fa fa-key" aria-hidden="true"></i>
+                <input type="password" name="password" placeholder='password'>  {# type=password可使字符加密显示 #}
+            </div>
+            <button>Login</button>
+{#            <a id="password_change" href="{% url 'app1:forget_password' %}">忘记密码</a>#}
+        </form>
+    </div>
+{% endblock %}
+
+{% block css_code %}
+{#    <link rel="stylesheet" href="/static/css/login.css">#}
+    <link rel="stylesheet" href="{% static 'css/login.css' %}">   {# 效果和上面被注掉的相同 只不过使用了相对路径 #}
+    <link rel="stylesheet" href="/static/css/font-awesome.css">
+    <style type="text/css">
+        #password_change {
+            position: absolute ;
+            top: 460px ;
+            left: 890px ;
+        }
+    </style>
+{% endblock %}

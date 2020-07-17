@@ -1,0 +1,22 @@
+{% extends 'UserManager/base_user.html' %}
+
+{% load static %}
+
+{% block content %}
+    <h3>我的关注</h3><br>
+    <ul>
+        {% for idol in idols %}
+            <li>
+{#                <div>头像</div>#}
+                <style>#icon{width:40px; height: 40px; border-radius: 50%}</style>
+                <img id="icon" src="/static/uploadfiles/{{ idol.icon }}" alt="icon">
+                <a href="{% url 'app1:his_home' idol.id%}">{{ idol.name }}</a>
+{#                <div>{{ idol.name }}</div>#}
+                <hr>
+            </li>
+        {% empty %}
+            <li>您目前还没有关注任何人哦~</li>
+        {% endfor %}
+    </ul>
+
+{% endblock %}

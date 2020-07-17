@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block head %}
+    <form action="{% url 'app1:search_discussion' %}" method="post">
+        {% csrf_token %}
+        <div class="searcher">
+        <input type="text" name="search_ob" placeholder="请输入您想要搜索的问题...">
+        <button>Search</button>
+        </div>
+    </form>
+{% endblock %}
+
+{% block content %}
+    <h4>搜索结果</h4>
+    <ul>
+        {% for aim_discussion in aim_discussions %}
+            <li><a href="{% url 'app1:show_discussion' discussion_id=aim_discussion.id %}">
+                {{ aim_discussion.title }}
+            </a></li>
+        {% empty %}
+            <span>没有找到这个问题哦..</span>
+            <a href="{% url 'app1:add_discussion' %}">我要提问?</a>
+        {% endfor %}
+    </ul>
+{% endblock %}

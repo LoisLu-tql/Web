@@ -1,0 +1,8 @@
+2020/5/12
+Install uwsgi failed  ("pip install uwsgi")
+try : "sudo apt-get install libpython3.6-dev"  succeed
+
+2020/5/14
+Mysql cannot start without 'sudo'
+After a lot of work, it can work without 'sudo' !
+

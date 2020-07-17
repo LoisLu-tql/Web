@@ -1,0 +1,16 @@
+{% extends 'Blog/base_blog.html' %}
+
+{% block content %}
+    <h3>我收藏的博客</h3><br>
+    <ul>
+        {% for article in articles %}
+            <li>
+                <div><a href="{% url 'app1:show_article' article_id=article.id %}">{{ article.title }}</a></div>
+                <hr>
+            </li>
+            {% empty %}
+            <li>您还没有收藏任何博客哦~</li>
+        {% endfor %}
+    </ul>
+
+{% endblock %}

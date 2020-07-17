@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+
+{% block head %}
+    <div>
+        <a href="{% url 'app1:add_discussion' %}">提问</a>
+    </div>
+    <form action="{% url 'app1:search_discussion' %}" method="post">
+        {% csrf_token %}
+        <div class="searcher">
+        <input type="text" name="search_ob" placeholder="请输入您想要搜索的问题...">
+        <button>Search</button>
+        </div>
+    </form>
+    <hr>
+    <a href="{% url 'app1:get_d_label' 1 %}">习题求解</a>&nbsp;
+    <a href="{% url 'app1:get_d_label' 2 %}">寻物启事</a>&nbsp;
+    <a href="{% url 'app1:get_d_label' 3 %}">学习疑惑</a>&nbsp;
+    <a href="{% url 'app1:get_d_label' 4 %}">情感问题</a>&nbsp;
+    <a href="{% url 'app1:get_d_label' 5 %}">留学咨询</a>&nbsp;
+    <hr>
+{% endblock %}
+
+{% block content %}
+
+    <ul>
+        {% for discussion in discussions %}
+            <li><a href="{% url 'app1:show_discussion' discussion_id=discussion.id %}">{{ discussion.title }}</a></li>
+        {% empty %}
+            <li>No Discussion ! </li>
+        {% endfor %}
+    </ul>
+    {#    nav里为分页器 #}
+    <nav aria-label="Page navigation">
+        <ul class="pagination">
+
+            {% if page_now == 1 %}
+                <li class="disabled">
+                    <span>
+                        <span aria-hidden="true">&laquo;</span>
+                    </span>
+                </li>
+            {% else %}
+                <li>
+                    <a href="{% url 'app1:discussions' %}?page={{ page_objects.previous_page_number }}" aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
+                </li>
+            {% endif %}
+
+            {% for page in page_range %}
+                <li>
+                    <a href="{% url 'app1:discussions' %}?page={{ page }}">{{ page }}</a>
+                </li>
+            {% endfor %}
+
+            {% if page_objects.has_next %}
+                <li>
+                    <a href="{% url 'app1:discussions' %}?page={{ page_objects.next_page_number }}" aria-label="Previous">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                </li>
+            {% else %}
+                <li class="disabled">
+                    <span>
+                        <span aria-hidden="true">&raquo;</span>
+                    </span>
+                </li>
+            {% endif %}
+        </ul>
+    </nav>
+
+{% endblock %}
