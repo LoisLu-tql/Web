@@ -1,11 +1,14 @@
+import re
 import uuid
 from io import BytesIO
 import random
 
+from django.db import connection
 from PIL import Image, ImageFont
 from PIL.ImageDraw import ImageDraw
 from django.core.cache import cache
 from django.core.paginator import Paginator
+from django.db import connection
 from django.db.models import Q
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render, redirect
@@ -14,7 +17,8 @@ from django.shortcuts import render, redirect
 from django.urls import reverse
 
 from app1.models import Article, Person, Likes, Discussion, LikeArticle, MarkArticle, ArticleComment, LikeDiscussion, \
-    MarkDiscussion, DiscussionResponse, LikeDiscussionResponse, Notice, BlogLabel, DiscussionLabel
+    MarkDiscussion, DiscussionResponse, LikeDiscussionResponse, Notice, BlogLabel, DiscussionLabel, UserLabel, \
+    UserBlogLabel
 from app1.tools import get_color, generate_code
 from web1 import settings
 
@@ -177,11 +181,17 @@ def add_article(request):
     try:
         user = Person.objects.get(name=request.session['username'])
         if request.method == "GET":
+
+            userlabels = UserLabel.objects.filter(owner=user)
+
             context = {
                 'title': 'Add article',
+                'userlabels': userlabels,
             }
             return render(request, 'Blog/add_article.html', context)
-        else:
+
+        elif request.method == "POST":
+
             article = Article()
             article.title = request.POST.get('title')
             article.content = request.POST.get('content')
@@ -201,6 +211,18 @@ def add_article(request):
                 blog_label.label_2 = labels[1]
                 blog_label.label_3 = labels[2]
             blog_label.save()
+
+            tot = request.POST.get("tot_label")
+            tot = int(tot)
+            for i in range(1,tot+1):
+                lid = 'ulabel'+str(i)
+                ulabel_name = request.POST.get(lid)
+                ulabel_name = ulabel_name.strip()
+                ulabel = UserLabel.objects.filter(name=ulabel_name).filter(owner=user).first()
+                ubl = UserBlogLabel()
+                ubl.article_id = article.id
+                ubl.label_id = ulabel.id
+                ubl.save()
 
             response = redirect(reverse('app1:home'))
             return response
@@ -223,10 +245,16 @@ def show_article(request, article_id):
     is_author = False
     article = Article.objects.get(id=article_id)
     comments = ArticleComment.objects.filter(article=article)
+    ulbs = UserBlogLabel.objects.filter(article_id=article.id)
+    ulabels = []
+    for ubl in ulbs:
+        ulabel = UserLabel.objects.get(id=ubl.label_id)
+        ulabels.append(ulabel)
     data = {
         'title': article.title,
         'article': article,
         'comments': comments,
+        'ulabels': ulabels,
     }
     try:
         blog_label = BlogLabel.objects.get(article_id=article.id)
@@ -347,14 +375,26 @@ def my_blog(request):
         return redirect(reverse('app1:login'))
 
     user = Person.objects.get(name=username)
-    articles = Article.objects.filter(author=user)
+    articles = Article.objects.filter(author=user).order_by('-id')
 
     for article in articles:
         article.content = article.content[:90]
 
+    ulabels = UserLabel.objects.filter(owner=user)
+
+    ulabel_now = int(request.GET.get('ulabel_now',0))
+    if ulabel_now :
+        ulabel = UserLabel.objects.get(id=ulabel_now)
+        articles = []
+        ubls = UserBlogLabel.objects.filter(label_id=ulabel.id)
+        for ubl in ubls:
+            article = Article.objects.get(id=ubl.article_id)
+            articles.append(article)
+
     context = {
         'title': 'My Blogs',
         'articles': articles,
+        'ulabels': ulabels,
     }
 
     return render(request, 'Blog/my_blog.html', context=context)
@@ -438,6 +478,10 @@ def blogs(request):
     blogs = Article.objects.all().order_by('-id')  # 新发表的(id值大的)排在前面
     paginator = Paginator(blogs, per_page)
     page_objects = paginator.page(page_now)
+
+    # label_now = int(request.GET.get('label_now', 0))
+    # if label_now:
+    #     blogs = blogs.filter()
 
     for blog in blogs:
         blog.content = blog.content[:50]
@@ -791,7 +835,15 @@ def edit_blog(request, article_id):
 def search_blog(request):
     if request.method == 'POST':
         search_ob = request.POST.get('search_ob')
-        aim_blogs = Article.objects.filter(title__icontains=search_ob)
+        search_ob = search_ob.replace(' ','')
+        raw_sql = "select * from app1_article where title like concat(%s,%s,%s)"
+        pattern = re.compile('.{1}')
+        search_ob = '%'.join(pattern.findall(search_ob))
+        print(search_ob)
+
+        aim_blogs = Article.objects.raw(raw_sql,params=['%',search_ob,'%'])
+
+        # aim_blogs = Article.objects.filter(title__contains=search_ob)
         data = {
             'aim_blogs': aim_blogs,
         }
@@ -801,7 +853,13 @@ def search_blog(request):
 def search_discussion(request):
     if request.method == 'POST':
         search_ob = request.POST.get('search_ob')
-        aim_discussions = Discussion.objects.filter(title__icontains=search_ob)
+        search_ob = search_ob.replace(' ','')
+        raw_sql = "select * from app1_discussion where title like concat(%s,%s,%s)"
+        pattern = re.compile('.{1}')
+        search_ob = '%'.join(pattern.findall(search_ob))
+
+        aim_discussions = Discussion.objects.raw(raw_sql,params=['%',search_ob,'%'])
+
         data = {
             'aim_discussions': aim_discussions,
         }
@@ -1026,3 +1084,38 @@ def get_d_label(request, label_type):
         'label_type': label_type,
     }
     return render(request, 'Discussion/discussions_with_label.html', context=data)
+
+
+def add_label(request):
+    label_name = request.GET.get('labelname')
+    label_name = label_name.strip()
+    label = UserLabel.objects.filter(name=label_name)
+    if label.exists() :
+        data = {
+            'status': 901,
+            'msg': 'Label already exists',
+        }
+    else :
+        username = request.session.get('username')
+        user = Person.objects.get(name=username)
+        label = UserLabel()
+        label.name = label_name
+        label.owner = user
+        label.save()
+        data = {
+            'status': 200,
+            'msg': 'Add success',
+        }
+    return JsonResponse(data=data)
+
+
+# def refresh_label(request):
+#     username = request.session.get('username')
+#     user = Person.objects.get(name=username)
+#     labels = UserLabel.objects.filter(owner=user)
+#     labelnames = []
+#     for label in labels :
+#         labelnames.append(label.name)
+#     data = {
+#
+#     }

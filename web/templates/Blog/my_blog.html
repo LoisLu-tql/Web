@@ -2,15 +2,31 @@
 
 {% block content %}
 
-    {% for article in articles %}
+    <span>分类:</span>
+    <ul>
+        {% for ulabel in ulabels %}
+            <li>
+                <a href="{% url 'app1:my_blog' %}?ulabel_now={{ ulabel.id }}">{{ ulabel.name }}</a>
+            </li>
+        {% endfor %}
         <li>
-            <a href="{% url 'app1:show_article' article_id=article.id %}">
-                <h4>{{ article.title }}</h4>
-                <div>{{ article.content }}</div>
-            </a>
+            <a href="{% url 'app1:my_blog' %}?ulabel_now=0">全部分类</a>
         </li>
-    {% empty %}
-        <li>No blogs!</li>
-    {% endfor %}
+    </ul>
+
+    <hr>
+
+    <ul>
+        {% for article in articles %}
+            <li>
+                <a href="{% url 'app1:show_article' article_id=article.id %}">
+                    <h4>{{ article.title }}</h4>
+                    <div>{{ article.content }}</div>
+                </a>
+            </li>
+        {% empty %}
+            <li>No blogs!</li>
+        {% endfor %}
+    </ul>
 
 {% endblock %}

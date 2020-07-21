@@ -4,7 +4,13 @@
     <form action="{% url 'app1:add_discussion' %}" method="post">
         {% csrf_token %}
         <span>标题：</span> <input type="text" name="title"> <br>
-        <span>内容：</span> <textarea name="content"></textarea><br>
+        <div id="div1" class="toolbar">
+        </div>
+        <div style="padding: 5px 0; color: #ccc"> </div>
+        <div id="div2" class="text">
+            <p>请输入内容</p>
+        </div>
+        <textarea name="content" id="text1" style="display:none"></textarea>
         <span>添加标签,让你的问题被更多人看到!</span><br>
         <input type="checkbox" value="1" name="item" onClick="onCheckBox(this)">习题求解
         <input type="checkbox" value="2" name="item" onClick="onCheckBox(this)">寻物启事
@@ -17,15 +23,6 @@
 
 {% block head %}
     {{ block.super }}
-    <script type="text/javascript" src="/static/tiny_mce/tiny_mce.js"></script>
-    <script type="text/javascript">
-        tinyMCE.init({
-            "mode": "textareas",
-            "theme": "advanced",
-            "width": 800,
-            "height": 600,
-        })
-    </script>
     <script language="javascript" type="text/javascript">
     var maxChoices = 3;
     var flag = 0;
@@ -53,4 +50,38 @@
         }
     }
 </script>
+{% endblock %}
+
+{% block css_code %}
+    <style type="text/css">
+        .toolbar {
+            border: 1px solid #ccc;
+        }
+        .text {
+            border: 1px solid #ccc;
+            height: 400px;
+        }
+        .userlabels {
+            width: 60px ;
+        }
+    </style>
+{% endblock %}
+
+{% block js_code %}
+    <script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+    {#    以下为富文本相关   #}
+    <script type="text/javascript" src="/static/js/wangEditor/wangEditor.min.js"></script>
+    <script type="text/javascript">
+        var E = window.wangEditor
+        var editor1 = new E('#div2')  // 两个参数也可以传入 elem 对象，class 选择器
+        {#editor1.create()#}
+        var $text1 = $('#text1')
+        editor1.customConfig.onchange = function (html) {
+            // 监控变化，同步更新到 textarea
+            $text1.val(html)
+        }
+        editor1.create()
+        // 初始化 textarea 的值
+        $text1.val(editor1.txt.html())
+    </script>
 {% endblock %}

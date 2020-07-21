@@ -1,7 +1,7 @@
 {% extends 'Blog/base_blog.html' %}
 
 {% load static %}
-{# 这个js要先加入，所以加在头部#}
+
 {% block head %}
     <script type="text/javascript" src="/static/tiny_mce/tiny_mce.js"></script>
     <script type="text/javascript">
@@ -13,6 +13,7 @@
         })
     </script>
     <script language="javascript" type="text/javascript">
+
     var maxChoices = 3;
     var flag = 0;
     function onCheckBox(checkbox) {
@@ -38,15 +39,26 @@
             }
         }
     }
+
     </script>
+
+
+
 {% endblock %}
 
 {% block content %}
-    <form action="{% url 'app1:add_article' %}" method="post">
+    <form action="{% url 'app1:add_article' %}" id="formlist" method="post" onsubmit="return check()">
         {% csrf_token %}
         <span>标题：</span> <input type="text" name="title"> <br>
-        <span>内容：</span> <textarea name="content"></textarea><hr>
-        <span>添加标签,让你的文章被更多人看到!</span><br>
+{#        <span>内容：</span> <textarea name="content"></textarea><hr>#}
+        <div id="div1" class="toolbar">
+        </div>
+        <div style="padding: 5px 0; color: #ccc"> </div>
+        <div id="div2" class="text"> <!--可使用 min-height 实现编辑区域自动增加高度-->
+            <p>请输入内容</p>
+        </div>
+        <textarea name="content" id="text1" style="display:none"></textarea>
+        <span>添加标签,让你的文章被更多人看到!</span> <br>
         <span>学习</span><br>
         <input type="checkbox" value="习题解答" name="item" onClick="onCheckBox(this)">习题解答
         <input type="checkbox" value="数学建模" name="item" onClick="onCheckBox(this)">数学建模
@@ -59,5 +71,63 @@
         <input type="checkbox" value="经验分享" name="item" onClick="onCheckBox(this)">经验分享
         <br>
         <button>发布</button>
+{#        <input type="button" id="submit_button" value="提交">#}
     </form>
+
+    {# 个人标签相关 #}
+{#    <hr>#}
+{#    <span>已添加标签:</span>#}
+{#    <ul id="selectedlabels">#}
+{##}
+{#    </ul>#}
+{#    <span id="backout">撤销</span> <br>#}
+    <span>我的标签:</span>
+    <ul id="ulabels">
+        {% for label in userlabels %}
+            <li class="userlabels not_selected">
+                {{ label.name }}
+            </li>
+        {% endfor %}
+    </ul>
+
+    {# 添加新的个人标签 #}
+    <input type="text" id="label_name" name="label_name"> <br>
+    <button id="add_label_button" name="add_label_button">添加标签</button>
+    <div id="add_label_info"></div>
+
+{% endblock %}
+
+{% block css_code %}
+    <style type="text/css">
+        .toolbar {
+            border: 1px solid #ccc;
+        }
+        .text {
+            border: 1px solid #ccc;
+            height: 400px;
+        }
+        .userlabels {
+            width: 60px ;
+        }
+    </style>
+{% endblock %}
+
+{% block js_code %}
+    <script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+    <script type="text/javascript" src="/static/js/my_js/label/add_label.js"></script>
+    {#    以下为富文本相关   #}
+    <script type="text/javascript" src="/static/js/wangEditor/wangEditor.min.js"></script>
+    <script type="text/javascript">
+        var E = window.wangEditor
+        var editor1 = new E('#div2')  // 两个参数也可以传入 elem 对象，class 选择器
+        {#editor1.create()#}
+        var $text1 = $('#text1')
+        editor1.customConfig.onchange = function (html) {
+            // 监控变化，同步更新到 textarea
+            $text1.val(html)
+        }
+        editor1.create()
+        // 初始化 textarea 的值
+        $text1.val(editor1.txt.html())
+    </script>
 {% endblock %}

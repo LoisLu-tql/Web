@@ -101,6 +101,10 @@ urlpatterns = [
 
     url(r'^getdlabel/(?P<label_type>\d+)/', views.get_d_label, name='get_d_label'),
 
+    url(r'^addlabel/', views.add_label, name = 'add_label'),
+
+    # url(r'^refreshlabel/', views.refresh_label, name = 'refresh_label'),
+
     url(r'^$', views.index, name='index'),
 
 ]

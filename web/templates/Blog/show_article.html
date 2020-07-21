@@ -34,8 +34,20 @@
 
     <hr>
     {% if is_label %}
-        标签: {{ blog_label.label_1 }} {{ blog_label.label_2 }} {{ blog_label.label_3 }}
+        系统标签: {{ blog_label.label_1 }} {{ blog_label.label_2 }} {{ blog_label.label_3 }}
     {% endif %}
+
+    <hr>
+    <div>个人标签:</div>
+    <ul>
+        {% for ulabel in ulabels %}
+            <li>
+                {{ ulabel.name }}
+            </li>
+        {% endfor %}
+
+    </ul>
+
     <hr>
     <h5><div><a href="{% url 'app1:add_article_comment' article_id=article.id %}">添加评论</a></div></h5>
     <ul>
