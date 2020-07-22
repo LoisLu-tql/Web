@@ -21,7 +21,9 @@
             <li>
                 <a href="{% url 'app1:show_article' article_id=article.id %}">
                     <h4>{{ article.title }}</h4>
+                    {% autoescape off %}
                     <div>{{ article.content }}</div>
+                    {% endautoescape %}
                 </a>
             </li>
         {% empty %}

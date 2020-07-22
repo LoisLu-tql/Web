@@ -84,17 +84,25 @@ class Notice(models.Model):
     discussion_response = models.ForeignKey(DiscussionResponse, null=True)
     have_read = models.IntegerField(default=0)
 
+# class BlogLabel(models.Model):
+#     article_id = models.IntegerField()
+#     label_1 = models.CharField(max_length=8, null=True, default="")
+#     label_2 = models.CharField(max_length=8, null=True, default="")
+#     label_3 = models.CharField(max_length=8, null=True, default="")
+
 class BlogLabel(models.Model):
     article_id = models.IntegerField()
-    label_1 = models.CharField(max_length=8, null=True, default="")
-    label_2 = models.CharField(max_length=8, null=True, default="")
-    label_3 = models.CharField(max_length=8, null=True, default="")
+    have_label = models.IntegerField(null=True, default=0)
+
+# class DiscussionLabel(models.Model):
+#     discussion_id = models.IntegerField()
+#     label_1 = models.IntegerField(null=True, default=0) # 0-无 1-习题求解 2-寻物启事 3-学习疑惑 4-情感问题 5-留学咨询
+#     label_2 = models.IntegerField(null=True, default=0)
+#     label_3 = models.IntegerField(null=True, default=0)
 
 class DiscussionLabel(models.Model):
     discussion_id = models.IntegerField()
-    label_1 = models.IntegerField(null=True, default=0) # 0-无 1-习题求解 2-寻物启事 3-学习疑惑 4-情感问题 5-留学咨询
-    label_2 = models.IntegerField(null=True, default=0)
-    label_3 = models.IntegerField(null=True, default=0)
+    have_label = models.IntegerField(null=True, default=0)
 
 class UserLabel(models.Model):   # 维护标签内容与标签所属的用户
     owner = models.ForeignKey(Person)

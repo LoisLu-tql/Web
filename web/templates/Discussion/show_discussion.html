@@ -25,16 +25,19 @@
     <hr>
     {% if is_label %}
         标签:
-        {% if discussion_label.label_1 == 1 or discussion_label.label_2 == 1 or discussion_label.label_3 == 1 %} 习题求解
-        {% endif %}
-        {% if discussion_label.label_1 == 2 or discussion_label.label_2 == 2 or discussion_label.label_3 == 2 %} 寻物启事
-        {% endif %}
-        {% if discussion_label.label_1 == 3 or discussion_label.label_2 == 3 or discussion_label.label_3 == 3 %} 学习疑惑
-        {% endif %}
-        {% if discussion_label.label_1 == 4 or discussion_label.label_2 == 4 or discussion_label.label_3 == 4 %} 情感问题
-        {% endif %}
-        {% if discussion_label.label_1 == 5 or discussion_label.label_2 == 5 or discussion_label.label_3 == 5 %} 留学咨询
-        {% endif %}
+{#        {% if discussion_label.label_1 == 1 or discussion_label.label_2 == 1 or discussion_label.label_3 == 1 %} 习题求解#}
+{#        {% endif %}#}
+{#        {% if discussion_label.label_1 == 2 or discussion_label.label_2 == 2 or discussion_label.label_3 == 2 %} 寻物启事#}
+{#        {% endif %}#}
+{#        {% if discussion_label.label_1 == 3 or discussion_label.label_2 == 3 or discussion_label.label_3 == 3 %} 学习疑惑#}
+{#        {% endif %}#}
+{#        {% if discussion_label.label_1 == 4 or discussion_label.label_2 == 4 or discussion_label.label_3 == 4 %} 情感问题#}
+{#        {% endif %}#}
+{#        {% if discussion_label.label_1 == 5 or discussion_label.label_2 == 5 or discussion_label.label_3 == 5 %} 留学咨询#}
+{#        {% endif %}#}
+        {% for label in labels %}
+            {{ label }}&nbsp;
+        {% endfor %}
     {% endif %}
     <hr>
     <h5><div><a href="{% url 'app1:add_discussion_comment' discussion_id=discussion.id %}">添加评论</a></div></h5>

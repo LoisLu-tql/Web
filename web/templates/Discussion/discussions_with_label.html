@@ -1,15 +1,15 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    {% if label_type == 1 %}
+    {% if label_type == '1' %}
         <h3>习题求解</h3>
-    {% elif label_type == 2 %}
+    {% elif label_type == '2' %}
         <h3>寻物启事</h3>
-    {% elif label_type == 3 %}
+    {% elif label_type == '3' %}
         <h3>学习疑惑</h3>
-    {% elif label_type == 4 %}
+    {% elif label_type == '4' %}
         <h3>情感问题</h3>
-    {% elif label_type == 5 %}
+    {% elif label_type == '5' %}
         <h3>留学咨询</h3>
     {% endif %}
     <ul>

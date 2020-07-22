@@ -201,20 +201,31 @@ def add_article(request):
             blog_label = BlogLabel()
             blog_label.article_id = article.id
             labels = request.POST.getlist("item")
-            if len(labels) == 1:
-                blog_label.label_1 = labels[0]
-            elif len(labels) == 2:
-                blog_label.label_1 = labels[0]
-                blog_label.label_2 = labels[1]
-            elif len(labels) == 3:
-                blog_label.label_1 = labels[0]
-                blog_label.label_2 = labels[1]
-                blog_label.label_3 = labels[2]
+            # if len(labels) == 1:
+            #     blog_label.label_1 = labels[0]
+            # elif len(labels) == 2:
+            #     blog_label.label_1 = labels[0]
+            #     blog_label.label_2 = labels[1]
+            # elif len(labels) == 3:
+            #     blog_label.label_1 = labels[0]
+            #     blog_label.label_2 = labels[1]
+            #     blog_label.label_3 = labels[2]
+            for label in labels:
+                blog_label.have_label += pow(2, int(label) - 1)
+            s = []
+            binstring = ''
+            while blog_label.have_label > 0:
+                rem = blog_label.have_label % 2
+                s.append(rem)
+                blog_label.have_label = blog_label.have_label // 2
+            while len(s) > 0:
+                binstring = binstring + str(s.pop())
+            blog_label.have_label = int(binstring)
             blog_label.save()
 
             tot = request.POST.get("tot_label")
             tot = int(tot)
-            for i in range(1,tot+1):
+            for i in range(1, tot+1):
                 lid = 'ulabel'+str(i)
                 ulabel_name = request.POST.get(lid)
                 ulabel_name = ulabel_name.strip()
@@ -258,7 +269,23 @@ def show_article(request, article_id):
     }
     try:
         blog_label = BlogLabel.objects.get(article_id=article.id)
-        data['blog_label'] = blog_label
+        # data['blog_label'] = blog_label
+        labels = []
+        if blog_label.have_label % 10 == 1:
+            labels.append('习题解答')
+        if blog_label.have_label // 10 % 10 == 1:
+            labels.append('数学建模')
+        if blog_label.have_label // 100 % 10 == 1:
+            labels.append('数据结构与算法')
+        if blog_label.have_label // 1000 % 10 == 1:
+            labels.append('学习资料')
+        if blog_label.have_label // 10000 % 10 == 1:
+            labels.append('考研')
+        if blog_label.have_label // 100000 % 10 == 1:
+            labels.append('校园生活')
+        if blog_label.have_label // 1000000 % 10 == 1:
+            labels.append('经验分享')
+        data['labels'] = labels
         is_label = True
     except Exception as e:
         is_label = False
@@ -516,15 +543,27 @@ def add_discussion(request):
         discussion_label = DiscussionLabel()
         discussion_label.discussion_id = discussion.id
         labels = request.POST.getlist("item")
-        if len(labels) == 1:
-            discussion_label.label_1 = labels[0]
-        elif len(labels) == 2:
-            discussion_label.label_1 = labels[0]
-            discussion_label.label_2 = labels[1]
-        elif len(labels) == 3:
-            discussion_label.label_1 = labels[0]
-            discussion_label.label_2 = labels[1]
-            discussion_label.label_3 = labels[2]
+        # if len(labels) == 1:
+        #     discussion_label.label_1 = labels[0]
+        # elif len(labels) == 2:
+        #     discussion_label.label_1 = labels[0]
+        #     discussion_label.label_2 = labels[1]
+        # elif len(labels) == 3:
+        #     discussion_label.label_1 = labels[0]
+        #     discussion_label.label_2 = labels[1]
+        #     discussion_label.label_3 = labels[2]
+
+        for label in labels:
+            discussion_label.have_label += pow(2, int(label)-1)
+        s = []
+        binstring = ''
+        while discussion_label.have_label > 0:
+            rem = discussion_label.have_label % 2
+            s.append(rem)
+            discussion_label.have_label = discussion_label.have_label // 2
+        while len(s) > 0:
+            binstring = binstring + str(s.pop())
+        discussion_label.have_label = int(binstring)
         discussion_label.save()
 
         return redirect(reverse('app1:home'))
@@ -571,7 +610,19 @@ def show_discussion(request, discussion_id):
     }
     try:
         discussion_label = DiscussionLabel.objects.get(discussion_id=discussion.id)
-        data['discussion_label'] = discussion_label
+        labels = []
+        if discussion_label.have_label % 10 == 1:
+            labels.append('习题求解')
+        if discussion_label.have_label // 10 % 10 == 1:
+            labels.append('寻物启事')
+        if discussion_label.have_label // 100 % 10 == 1:
+            labels.append('学习疑惑')
+        if discussion_label.have_label // 1000 % 10 == 1:
+            labels.append('情感问题')
+        if discussion_label.have_label // 10000 % 10 == 1:
+            labels.append('留学咨询')
+        #data['discussion_label'] = discussion_label
+        data['labels'] = labels
         is_label = True
     except Exception as e:
         is_label = False
@@ -1040,47 +1091,38 @@ def message_box(request):
 
 
 def get_label(request, label_type):
-    if label_type == '1':
-        labels = BlogLabel.objects.filter(Q(label_1='习题解答') | Q(label_2='习题解答') | Q(label_3='习题解答'))
-        label_name = '习题解答'
-    elif label_type == '2':
-        labels = BlogLabel.objects.filter(Q(label_1='数学建模') | Q(label_2='数学建模') | Q(label_3='数学建模'))
-        label_name = '数学建模'
-    elif label_type == '3':
-        labels = BlogLabel.objects.filter(Q(label_1='数据结构与算法') | Q(label_2='数据结构与算法') | Q(label_3='数据结构与算法'))
-        label_name = '数据结构与算法'
-    elif label_type == '4':
-        labels = BlogLabel.objects.filter(Q(label_1='学习资料') | Q(label_2='学习资料') | Q(label_3='学习资料'))
-        label_name = '学习资料'
-    elif label_type == '5':
-        labels = BlogLabel.objects.filter(Q(label_1='考研') | Q(label_2='考研') | Q(label_3='考研'))
-        label_name = '考研'
-    elif label_type == '6':
-        labels = BlogLabel.objects.filter(Q(label_1='校园生活') | Q(label_2='校园生活') | Q(label_3='校园生活'))
-        label_name = '校园生活'
-    else:
-        labels = BlogLabel.objects.filter(Q(label_1='经验分享') | Q(label_2='经验分享') | Q(label_3='经验分享'))
-        label_name = '经验分享'
-
-    articles = []
+    labels = BlogLabel.objects.all()
+    label_type_backup = int(label_type)
+    cor_articles = []
     for label in labels:
-        article = Article.objects.get(id=label.article_id)
-        articles.append(article)
+        while label_type_backup > 1:
+            label.have_label = label.have_label // 10
+            label_type_backup -= 1
+        if label.have_label % 10 == 1:
+            article = Article.objects.get(id=label.article_id)
+            cor_articles.append(article)
+        label_type_backup = int(label_type)
     data = {
-        'articles': articles,
-        'label_name': label_name,
+        'articles': cor_articles,
+        'label_type': label_type,
     }
     return render(request, 'Blog/blogs_with_label.html', context=data)
 
 
 def get_d_label(request, label_type):
-    labels = DiscussionLabel.objects.filter(Q(label_1=label_type) | Q(label_2=label_type) | Q(label_3=label_type))
-    discussions = []
+    labels = DiscussionLabel.objects.all()
+    label_type_backup = int(label_type)
+    cor_discussions = []
     for label in labels:
-        discussion = Discussion.objects.get(id=label.discussion_id)
-        discussions.append(discussion)
+        while label_type_backup > 1:
+            label.have_label = label.have_label // 10
+            label_type_backup -= 1
+        if label.have_label % 10 == 1:
+            discussion = Discussion.objects.get(id=label.discussion_id)
+            cor_discussions.append(discussion)
+        label_type_backup = int(label_type)
     data = {
-        'discussions': discussions,
+        'discussions': cor_discussions,
         'label_type': label_type,
     }
     return render(request, 'Discussion/discussions_with_label.html', context=data)
