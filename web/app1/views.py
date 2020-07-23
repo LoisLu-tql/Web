@@ -1,4 +1,5 @@
 import re
+import time
 import uuid
 from io import BytesIO
 import random
@@ -15,10 +16,11 @@ from django.shortcuts import render, redirect
 
 # Create your views here.
 from django.urls import reverse
+from django.utils import timezone
 
 from app1.models import Article, Person, Likes, Discussion, LikeArticle, MarkArticle, ArticleComment, LikeDiscussion, \
     MarkDiscussion, DiscussionResponse, LikeDiscussionResponse, Notice, BlogLabel, DiscussionLabel, UserLabel, \
-    UserBlogLabel
+    UserBlogLabel, ReadArticle
 from app1.tools import get_color, generate_code
 from web1 import settings
 
@@ -201,15 +203,6 @@ def add_article(request):
             blog_label = BlogLabel()
             blog_label.article_id = article.id
             labels = request.POST.getlist("item")
-            # if len(labels) == 1:
-            #     blog_label.label_1 = labels[0]
-            # elif len(labels) == 2:
-            #     blog_label.label_1 = labels[0]
-            #     blog_label.label_2 = labels[1]
-            # elif len(labels) == 3:
-            #     blog_label.label_1 = labels[0]
-            #     blog_label.label_2 = labels[1]
-            #     blog_label.label_3 = labels[2]
             for label in labels:
                 blog_label.have_label += pow(2, int(label) - 1)
             s = []
@@ -269,22 +262,27 @@ def show_article(request, article_id):
     }
     try:
         blog_label = BlogLabel.objects.get(article_id=article.id)
-        # data['blog_label'] = blog_label
         labels = []
         if blog_label.have_label % 10 == 1:
-            labels.append('习题解答')
+            labels.append('高等数学')
         if blog_label.have_label // 10 % 10 == 1:
-            labels.append('数学建模')
+            labels.append('线性代数')
         if blog_label.have_label // 100 % 10 == 1:
             labels.append('数据结构与算法')
         if blog_label.have_label // 1000 % 10 == 1:
-            labels.append('学习资料')
+            labels.append('大学物理')
         if blog_label.have_label // 10000 % 10 == 1:
-            labels.append('考研')
+            labels.append('概率论')
         if blog_label.have_label // 100000 % 10 == 1:
-            labels.append('校园生活')
+            labels.append('计算机科学与技术')
         if blog_label.have_label // 1000000 % 10 == 1:
-            labels.append('经验分享')
+            labels.append('机电工程与自动化')
+        if blog_label.have_label // 10000000 % 10 == 1:
+            labels.append('电子与信息工程')
+        if blog_label.have_label // 100000000 % 10 == 1:
+            labels.append('经济管理')
+        if blog_label.have_label // 1000000000 % 10 == 1:
+            labels.append('材料与环境')
         data['labels'] = labels
         is_label = True
     except Exception as e:
@@ -298,6 +296,15 @@ def show_article(request, article_id):
     data['is_login'] = is_login
     data['is_author'] = is_author
     data['is_label'] = is_label
+    try:
+        read = ReadArticle.objects.get(Q(article_id=article_id) & Q(reader_id=user.id))
+    except Exception as e:
+        read = ReadArticle()
+        read.article_id = article_id
+        read.reader_id = user.id
+        read.save()
+        article.read_num += 1
+        article.save()
     return render(request, 'Blog/show_article.html', context=data)
 
 
@@ -315,6 +322,9 @@ def add_like_relationship(request):  # 关注
         Relation.star_id = star_id
         Relation.fan_id = fan_id
         Relation.save()
+        star = Person.objects.get(id=star_id)
+        star.fans_num += 1
+        star.save()
         message = Notice()
         message.message_type = 4
         message.sender_id = fan_id
@@ -498,11 +508,14 @@ def personal_information(request):
         return render(request, 'Page Jump/change_success.html')
 
 
-def blogs(request):
+def blogs(request, order_type):
     page_now = int(request.GET.get('page', 1))
     per_page = 10
+    if order_type == '0':
+        blogs = Article.objects.all().order_by('-hot') #热度大在前
+    else:
+        blogs = Article.objects.all().order_by('-id')  # 新发表的(id值大的)排在前面
 
-    blogs = Article.objects.all().order_by('-id')  # 新发表的(id值大的)排在前面
     paginator = Paginator(blogs, per_page)
     page_objects = paginator.page(page_now)
 
@@ -513,12 +526,16 @@ def blogs(request):
     for blog in blogs:
         blog.content = blog.content[:50]
 
+    random_range = len(blogs)
+    aim_id = random.randint(1, random_range)
+
     data = {
         'blogs': blogs,
         'page_objects': page_objects,
         'page_range': paginator.page_range,  # paginator.page_range用于获取一共有多少页
         'page_now': page_now,
         'title': 'Blog',
+        'aim_id': aim_id,
     }
     return render(request, 'Blog/blogs.html', context=data)
 
@@ -543,15 +560,6 @@ def add_discussion(request):
         discussion_label = DiscussionLabel()
         discussion_label.discussion_id = discussion.id
         labels = request.POST.getlist("item")
-        # if len(labels) == 1:
-        #     discussion_label.label_1 = labels[0]
-        # elif len(labels) == 2:
-        #     discussion_label.label_1 = labels[0]
-        #     discussion_label.label_2 = labels[1]
-        # elif len(labels) == 3:
-        #     discussion_label.label_1 = labels[0]
-        #     discussion_label.label_2 = labels[1]
-        #     discussion_label.label_3 = labels[2]
 
         for label in labels:
             discussion_label.have_label += pow(2, int(label)-1)
@@ -574,7 +582,7 @@ def my_discussion(request):
     if not username:
         return render(request, 'Page Jump/notlogin_to_login.html')
     user = Person.objects.get(name=username)
-    discussions = Discussion.objects.filter(owner=user)
+    discussions = Discussion.objects.filter(owner=user).order_by('-id')
     data = {
         'discussions': discussions,
         'title': 'My discussions',
@@ -582,7 +590,7 @@ def my_discussion(request):
     return render(request, 'Discussion/my_discussion.html', context=data)
 
 
-def show_discussion(request, discussion_id):
+def show_discussion(request, discussion_id, order_type):
     try:
         discussion = Discussion.objects.get(pk=discussion_id)
     except Exception as e:
@@ -596,8 +604,11 @@ def show_discussion(request, discussion_id):
     if is_login:
         if username == discussion.owner.name:
             is_author = False
-
-    comments = DiscussionResponse.objects.filter(discussion=discussion)
+    #0-热度 1-最新
+    if order_type == '1':
+        comments = DiscussionResponse.objects.filter(discussion=discussion).order_by('-id')
+    else:
+        comments = DiscussionResponse.objects.filter(discussion=discussion).order_by('-likes_num')
 
     data = {
         'title': discussion.title,
@@ -606,22 +617,30 @@ def show_discussion(request, discussion_id):
         'is_author': is_author,
         'user': Person.objects.get(name=username),
         'comments': comments,
-
     }
     try:
         discussion_label = DiscussionLabel.objects.get(discussion_id=discussion.id)
         labels = []
         if discussion_label.have_label % 10 == 1:
-            labels.append('习题求解')
+            labels.append('高等数学')
         if discussion_label.have_label // 10 % 10 == 1:
-            labels.append('寻物启事')
+            labels.append('线性代数')
         if discussion_label.have_label // 100 % 10 == 1:
-            labels.append('学习疑惑')
+            labels.append('数据结构与算法')
         if discussion_label.have_label // 1000 % 10 == 1:
-            labels.append('情感问题')
+            labels.append('大学物理')
         if discussion_label.have_label // 10000 % 10 == 1:
-            labels.append('留学咨询')
-        #data['discussion_label'] = discussion_label
+            labels.append('概率论')
+        if discussion_label.have_label // 100000 % 10 == 1:
+            labels.append('机械制图')
+        if discussion_label.have_label // 1000000 % 10 == 1:
+            labels.append('寻物启事与失物招领')
+        if discussion_label.have_label // 10000000 % 10 == 1:
+            labels.append('找寻组织与兴趣交流')
+        if discussion_label.have_label // 100000000 % 10 == 1:
+            labels.append('心理咨询')
+        if discussion_label.have_label // 1000000000 % 10 == 1:
+            labels.append('跳蚤市场')
         data['labels'] = labels
         is_label = True
     except Exception as e:
@@ -634,7 +653,8 @@ def discussions(request):
     page_now = int(request.GET.get('page', 1))
     per_page = 10
 
-    discussions = Discussion.objects.all().order_by('-id')  # 新发表的(id值大的)排在前面
+    discussions = Discussion.objects.all().order_by('-last_comment_time')  # 新发表的或最新评论的排在前面
+
     paginator = Paginator(discussions, per_page)
     page_objects = paginator.page(page_now)
 
@@ -661,12 +681,14 @@ def add_article_comment(request, article_id):
     if request.method == 'GET':
         return render(request, 'Blog/add_comment.html', {'article_id': article_id})
     elif request.method == 'POST':
+        article = Article.objects.get(id=article_id)
         comment = ArticleComment()
         comment.owner = user
-        comment.article = Article.objects.get(id=article_id)
+        comment.article = article
+        article.comments_num += 1
         comment.content = request.POST.get('content')
         comment.save()
-
+        article.save()
         message = Notice()
         message.message_type = 1
         message.receiver_id = comment.article.author.id
@@ -744,12 +766,15 @@ def add_discussion_comment(request, discussion_id):
     if request.method == 'GET':
         return render(request, 'Discussion/add_comment.html', {'discussion_id': discussion_id})
     elif request.method == 'POST':
+        discussion = Discussion.objects.get(id=discussion_id)
         comment = DiscussionResponse()
         comment.owner = user
-        comment.discussion = Discussion.objects.get(id=discussion_id)
+        comment.discussion = discussion
+        discussion.comments_num += 1
+        discussion.last_comment_time = timezone.now()
         comment.content = request.POST.get('content')
         comment.save()
-
+        discussion.save()
         message = Notice()
         message.message_type = 2
         message.receiver_id = comment.discussion.owner.id
@@ -758,7 +783,7 @@ def add_discussion_comment(request, discussion_id):
         message.discussion_response = comment
         message.save()
 
-        return redirect(reverse('app1:show_discussion', kwargs={'discussion_id': discussion_id}))
+        return redirect(reverse('app1:show_discussion', kwargs={'discussion_id': discussion_id, 'order_type': '0'}))
 
 
 def recommend_discussion_response(request, comment_id, fan_id):
@@ -793,7 +818,7 @@ def recommend_discussion_response(request, comment_id, fan_id):
         #     'status': 200,
         #     'msg': 'add success',
         # }
-    return redirect(reverse('app1:show_discussion', kwargs={'discussion_id': comment.discussion.id}))
+    return redirect(reverse('app1:show_discussion', kwargs={'discussion_id': comment.discussion.id, 'order_type': '0'}))
 
 
 def explore(request):
@@ -1041,7 +1066,7 @@ def delete_comment(request, comment_id):
         if user.name != request.session['username']:
             return render(request, 'Wrong Page/noRight.html')
         comment.delete()
-        return redirect(reverse('app1:show_discussion', args=[discussion_id]))
+        return redirect(reverse('app1:show_discussion', kwargs={'discussion_id': discussion_id, 'order_type': '0'}))
     except Exception as e:
         return HttpResponse("此评论不存在哟~")
 
@@ -1052,6 +1077,9 @@ def unlike_relationship(request):
     relation = Likes.objects.filter(fan_id=fan_id).filter(star_id=star_id)
     if relation.exists():
         relation.delete()
+        star = Person.objects.get(id=star_id)
+        star.fans_num -= 1
+        star.save()
         data = {
             'status': 200,
             'msg': 'delete success',
@@ -1091,7 +1119,7 @@ def message_box(request):
 
 
 def get_label(request, label_type):
-    labels = BlogLabel.objects.all()
+    labels = BlogLabel.objects.all().order_by('-id')
     label_type_backup = int(label_type)
     cor_articles = []
     for label in labels:
@@ -1110,7 +1138,7 @@ def get_label(request, label_type):
 
 
 def get_d_label(request, label_type):
-    labels = DiscussionLabel.objects.all()
+    labels = DiscussionLabel.objects.all().order_by('-id')
     label_type_backup = int(label_type)
     cor_discussions = []
     for label in labels:
@@ -1161,3 +1189,43 @@ def add_label(request):
 #     data = {
 #
 #     }
+
+def random_discussion(request):
+    random_range = Discussion.objects.last().id
+    aim_id = random.randint(1, random_range)
+    if Discussion.objects.filter(id=aim_id).exists():
+        url = reverse('app1:show_discussion', kwargs={'discussion_id': aim_id, 'order_type': 0})
+        return redirect(url)
+    else:
+        return HttpResponse("暂时找不到问题噢,请稍后再试一次~")
+
+
+def calculate_hot(request):
+    articles = Article.objects.all()
+    for article in articles:
+        time_now = timezone.now()
+        time_diff = time.mktime(time_now.timetuple()) - time.mktime(article.add_time.timetuple())
+        if time_diff < 86400: #1day
+            time_value = 0.10
+        elif time_diff < 259200: #3days
+            time_value = 0.08
+        elif time_diff < 604800: #7days
+            time_value = 0.05
+        elif time_diff < 2592000: #1month
+            time_value = 0.03
+        else: #time_value随用户量作相应变化
+            time_value = 0.01
+        article.hot = article.comments_num + article.likes_num + (article.author.fans_num / 10)\
+                      + (article.read_num / 10) + time_value
+        article.save()
+    return HttpResponse("Modify successfully.")
+
+
+def random_blog(request):
+    random_range = Article.objects.last().id
+    aim_id = random.randint(1, random_range)
+    if Article.objects.filter(id=aim_id).exists():
+        url = reverse('app1:show_article', kwargs={'article_id': aim_id})
+        return redirect(url)
+    else:
+        return HttpResponse("暂时找不到文章噢,请稍后再试一次~")

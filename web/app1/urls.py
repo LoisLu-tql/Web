@@ -37,17 +37,17 @@ urlpatterns = [
 
     url(r'^changepasswordcheck/', views.change_password_check, name='change_password_check'),
 
-    url(r'^deletearticle/(?P<article_id>\d+)', views.delete_article, name = 'delete_article'),
+    url(r'^deletearticle/(?P<article_id>\d+)/', views.delete_article, name = 'delete_article'),
 
     url(r'^personalinformation/', views.personal_information, name = 'personal_information'),
 
-    url(r'^blogs/', views.blogs, name = 'blogs'),
+    url(r'^blogs/(?P<order_type>\d+)/', views.blogs, name = 'blogs'),
 
     url(r'^adddiscussion/', views.add_discussion, name = 'add_discussion'),
 
     url(r'^mydiscussion/', views.my_discussion, name='my_discussion'),
 
-    url(r'^show_discussion/(?P<discussion_id>\d+)/', views.show_discussion, name='show_discussion'),
+    url(r'^show_discussion/(?P<discussion_id>\d+)/(?P<order_type>\d+)/', views.show_discussion, name='show_discussion'),
 
     url(r'^discussions/', views.discussions, name = 'discussions'),
 
@@ -102,6 +102,12 @@ urlpatterns = [
     url(r'^getdlabel/(?P<label_type>\d+)/', views.get_d_label, name='get_d_label'),
 
     url(r'^addlabel/', views.add_label, name = 'add_label'),
+
+    url(r'^randomdiscussion/', views.random_discussion, name='random_discussion'),
+
+    url(r'^randomblog/', views.random_blog, name='random_blog'),
+
+    url(r'^calculatehot/', views.calculate_hot, name='calculate_hot'),#刷新博客热度排名
 
     # url(r'^refreshlabel/', views.refresh_label, name = 'refresh_label'),
 

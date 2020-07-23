@@ -2,7 +2,7 @@
 
 {% block head %}
     <div>
-        <a href="{% url 'app1:add_article' %}">写博客</a> &nbsp&nbsp&nbsp&nbsp
+        <a href="{% url 'app1:add_article' %}">写博客</a> &nbsp;
 {#        <span>...搜索...</span>#}
     </div>
     <form action="{% url 'app1:search_blog' %}" method="post">
@@ -13,14 +13,23 @@
         </div>
     </form>
     <hr>
-    <a href="{% url 'app1:get_label' 1 %}">习题解答</a>&nbsp;
-    <a href="{% url 'app1:get_label' 2 %}">数学建模</a>&nbsp;
+    <span>学科</span><br>
+    <a href="{% url 'app1:get_label' 1 %}">高等数学</a>&nbsp;
+    <a href="{% url 'app1:get_label' 2 %}">线性代数</a>&nbsp;
     <a href="{% url 'app1:get_label' 3 %}">数据结构与算法</a>&nbsp;
-    <a href="{% url 'app1:get_label' 4 %}">学习资料</a>&nbsp;
-    <a href="{% url 'app1:get_label' 5 %}">考研</a>&nbsp;
-    <a href="{% url 'app1:get_label' 6 %}">校园生活</a>&nbsp;
-    <a href="{% url 'app1:get_label' 7 %}">经验分享</a>&nbsp;
+    <a href="{% url 'app1:get_label' 4 %}">大学物理</a>&nbsp;
+    <a href="{% url 'app1:get_label' 5 %}">概率论</a>
+    <br><span>专业</span><br>
+    <a href="{% url 'app1:get_label' 6 %}">计算机科学与技术</a>&nbsp;
+    <a href="{% url 'app1:get_label' 7 %}">机电工程与自动化</a>&nbsp;
+    <a href="{% url 'app1:get_label' 8 %}">电子与信息工程</a>
+    <a href="{% url 'app1:get_label' 9 %}">经济管理</a>
+    <a href="{% url 'app1:get_label' 10 %}">材料与环境</a>
     <hr>
+    <div>
+        <a href="{% url 'app1:blogs' 0 %}">最热文章</a> &nbsp;
+        <a href="{% url 'app1:blogs' 1 %}">最新文章</a>
+    </div>
 {% endblock %}
 
 {% block content %}
@@ -44,7 +53,7 @@
                 </li>
             {% else %}
                 <li>
-                    <a href="{% url 'app1:blogs' %}?page={{ page_objects.previous_page_number }}" aria-label="Previous">
+                    <a href="{% url 'app1:blogs' 0 %}?page={{ page_objects.previous_page_number }}" aria-label="Previous">
                         <span aria-hidden="true">&laquo;</span>
                     </a>
                 </li>
@@ -52,13 +61,13 @@
 
             {% for page in page_range %}
                 <li>
-                    <a href="{% url 'app1:blogs' %}?page={{ page }}">{{ page }}</a>
+                    <a href="{% url 'app1:blogs' 0 %}?page={{ page }}">{{ page }}</a>
                 </li>
             {% endfor %}
 
             {% if page_objects.has_next %}
                 <li>
-                    <a href="{% url 'app1:blogs' %}?page={{ page_objects.next_page_number }}" aria-label="Previous">
+                    <a href="{% url 'app1:blogs' 0 %}?page={{ page_objects.next_page_number }}" aria-label="Previous">
                         <span aria-hidden="true">&raquo;</span>
                     </a>
                 </li>

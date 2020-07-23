@@ -14,7 +14,7 @@
     <h4>搜索结果</h4>
     <ul>
         {% for aim_discussion in aim_discussions %}
-            <li><a href="{% url 'app1:show_discussion' discussion_id=aim_discussion.id %}">
+            <li><a href="{% url 'app1:show_discussion' aim_discussion.id 0 %}">
                 {{ aim_discussion.title }}
             </a></li>
         {% empty %}

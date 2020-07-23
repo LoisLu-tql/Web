@@ -16,31 +16,24 @@
     {% if is_author %}
         <a href="{% url 'app1:delete_discussion' discussion_id=discussion.id %}">删除</a>
     {% elif is_login %}
-        <span id="like" star_id="{{ discussion.owner.id }}" fan_id="{{ user.id }}">关注提问者</span> &nbsp
-        <span id="recommend" discussion_id="{{ discussion.id }}" fan_id="{{ user.id }}" >赞</span> &nbsp
-        <span id="mark" discussion_id="{{ discussion.id }}" fan_id="{{ user.id }}" >收藏</span>
+        <span id="like" star_id="{{ discussion.owner.id }}" fan_id="{{ user.id }}">关注提问者</span> &nbsp;
+        <span id="recommend" discussion_id="{{ discussion.id }}" fan_id="{{ user.id }}" >赞</span> &nbsp;
+        <span id="mark" discussion_id="{{ discussion.id }}" fan_id="{{ user.id }}" >收藏</span> &nbsp;
+        <span>{{ discussion.comments_num }}回复</span>
         <br> <span id="AttentionHint"></span>
     {% endif %}
 
     <hr>
     {% if is_label %}
         标签:
-{#        {% if discussion_label.label_1 == 1 or discussion_label.label_2 == 1 or discussion_label.label_3 == 1 %} 习题求解#}
-{#        {% endif %}#}
-{#        {% if discussion_label.label_1 == 2 or discussion_label.label_2 == 2 or discussion_label.label_3 == 2 %} 寻物启事#}
-{#        {% endif %}#}
-{#        {% if discussion_label.label_1 == 3 or discussion_label.label_2 == 3 or discussion_label.label_3 == 3 %} 学习疑惑#}
-{#        {% endif %}#}
-{#        {% if discussion_label.label_1 == 4 or discussion_label.label_2 == 4 or discussion_label.label_3 == 4 %} 情感问题#}
-{#        {% endif %}#}
-{#        {% if discussion_label.label_1 == 5 or discussion_label.label_2 == 5 or discussion_label.label_3 == 5 %} 留学咨询#}
-{#        {% endif %}#}
         {% for label in labels %}
             {{ label }}&nbsp;
         {% endfor %}
     {% endif %}
     <hr>
     <h5><div><a href="{% url 'app1:add_discussion_comment' discussion_id=discussion.id %}">添加评论</a></div></h5>
+    <a href="{% url 'app1:show_discussion' discussion.id 0 %}">最热评论</a>&nbsp;
+    <a href="{% url 'app1:show_discussion' discussion.id 1 %}">最新评论</a>
     <ul>
         {% for comment in comments %}
             <li>
@@ -52,6 +45,7 @@
                         点赞
                     </a>&nbsp;&nbsp;
                     <span><a href="{% url 'app1:delete_comment' comment.id %}">删除评论</a></span>
+                    <h6>回答于{{ comment.add_time }}</h6>
                     <span id="AttentionHint2"></span>
                 </div><br>
             </li>

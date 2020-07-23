@@ -2,23 +2,29 @@
 
 {% block content %}
     {% if label_type == '1' %}
-        <h3>习题解答</h3>
+        <h3>高等数学</h3>
     {% elif label_type == '2' %}
-        <h3>数学建模</h3>
+        <h3>线性代数</h3>
     {% elif label_type == '3' %}
         <h3>数据结构与算法</h3>
     {% elif label_type == '4' %}
-        <h3>学习资料</h3>
+        <h3>大学物理</h3>
     {% elif label_type == '5' %}
-        <h3>考研</h3>
+        <h3>概率论</h3>
     {% elif label_type == '6' %}
-        <h3>校园生活</h3>
+        <h3>计算机科学与技术</h3>
     {% elif label_type == '7' %}
-        <h3>经验分享</h3>
+        <h3>机电工程与自动化</h3>
+    {% elif label_type == '8' %}
+        <h3>电子与信息工程</h3>
+    {% elif label_type == '9' %}
+        <h3>经济管理</h3>
+    {% elif label_type == '10' %}
+        <h3>材料与环境</h3>
     {% endif %}
     <ul>
         {% for article in articles %}
-            <li><a href="{% url 'app1:show_article' article_id=article.id %}">{{ article.title }}</a></li>
+            <li><a href="{% url 'app1:show_article' article.id %}">{{ article.title }}</a></li>
         {% empty %}
             <li>No Article ! </li>
         {% endfor %}

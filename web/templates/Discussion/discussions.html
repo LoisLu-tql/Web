@@ -2,7 +2,7 @@
 
 {% block head %}
     <div>
-        <a href="{% url 'app1:add_discussion' %}">提问</a>
+        <a href="{% url 'app1:add_discussion' %}">提问</a> &nbsp;
     </div>
     <form action="{% url 'app1:search_discussion' %}" method="post">
         {% csrf_token %}
@@ -12,11 +12,18 @@
         </div>
     </form>
     <hr>
-    <a href="{% url 'app1:get_d_label' 1 %}">习题求解</a>&nbsp;
-    <a href="{% url 'app1:get_d_label' 2 %}">寻物启事</a>&nbsp;
-    <a href="{% url 'app1:get_d_label' 3 %}">学习疑惑</a>&nbsp;
-    <a href="{% url 'app1:get_d_label' 4 %}">情感问题</a>&nbsp;
-    <a href="{% url 'app1:get_d_label' 5 %}">留学咨询</a>&nbsp;
+    <span>学习区</span><br>
+    <a href="{% url 'app1:get_d_label' 1 %}">高等数学</a>&nbsp;
+    <a href="{% url 'app1:get_d_label' 2 %}">线性代数</a>&nbsp;
+    <a href="{% url 'app1:get_d_label' 3 %}">数据结构与算法</a>&nbsp;
+    <a href="{% url 'app1:get_d_label' 4 %}">大学物理</a>&nbsp;
+    <a href="{% url 'app1:get_d_label' 5 %}">概率论</a>
+    <a href="{% url 'app1:get_d_label' 6 %}">机械制图</a><br>
+    <span>生活区</span><br>
+    <a href="{% url 'app1:get_d_label' 7 %}">寻物启事与失物招领</a>
+    <a href="{% url 'app1:get_d_label' 8 %}">找寻组织与兴趣交流</a>
+    <a href="{% url 'app1:get_d_label' 9 %}">心理咨询</a>
+    <a href="{% url 'app1:get_d_label' 10 %}">跳蚤市场</a>
     <hr>
 {% endblock %}
 
@@ -24,7 +31,7 @@
 
     <ul>
         {% for discussion in discussions %}
-            <li><a href="{% url 'app1:show_discussion' discussion_id=discussion.id %}">{{ discussion.title }}</a></li>
+            <li><a href="{% url 'app1:show_discussion' discussion.id 0 %}">{{ discussion.title }}</a></li>
         {% empty %}
             <li>No Discussion ! </li>
         {% endfor %}

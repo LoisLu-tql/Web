@@ -5,7 +5,7 @@
     <ul>
         {% for discussion in discussions %}
             <li>
-                <div><a href="{% url 'app1:show_discussion' discussion_id=discussion.id %}">{{ discussion.title }}</a></div>
+                <div><a href="{% url 'app1:show_discussion' discussion_id=discussion.id 0 %}">{{ discussion.title }}</a></div>
                 <hr>
             </li>
             {% empty %}

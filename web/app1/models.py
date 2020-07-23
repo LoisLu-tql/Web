@@ -9,20 +9,27 @@ class Person(models.Model):   # 用户
     icon = models.ImageField(upload_to='icons/%Y/%m', null=True, default='icons/2020/03/default.jpg')
     sex = models.IntegerField(default=0)  # 0-unknown  1-boy  2-girl
     motto = models.CharField(max_length=128, null=True)
-
+    fans_num = models.IntegerField(null=True, default=0)
 
 class ArticleTag(models.Model):
     name = models.CharField(max_length=32)
     owner = models.ForeignKey(Person)
     add_time = models.DateTimeField(auto_now_add=True)
 
-class Article(models.Model):  # 博客文章
+class Article(models.Model):  # 博客文章 #时间-梯度 访问人数/10 作者粉丝数/10 点赞数 评论数
     title = models.CharField(max_length=16)
     content = HTMLField()
     add_time = models.DateTimeField(auto_now_add=True)
     likes_num = models.IntegerField(default=0)
+    comments_num = models.IntegerField(null=True, default=0)
+    read_num = models.IntegerField(null=True, default=0)
     author = models.ForeignKey(Person, null=True)
     tag = models.ForeignKey(ArticleTag, null=True)
+    hot = models.DecimalField(decimal_places=4, max_digits=10, null=True, default=0)
+
+class ReadArticle(models.Model):
+    article_id = models.IntegerField(default=0, null=True)
+    reader_id = models.IntegerField(default=0, null=True)
 
 class ArticleComment(models.Model):  # 博客评论
     content = models.CharField(max_length=100)
@@ -53,6 +60,8 @@ class Discussion(models.Model):  # 论坛帖子
     owner = models.ForeignKey(Person)
     add_time = models.DateTimeField(auto_now_add=True, null=True)
     tag = models.ForeignKey(DiscussionTag, null=True)
+    comments_num = models.IntegerField(null=True, default=0)
+    last_comment_time = models.DateTimeField(auto_now_add=True, null=True)
 
 class DiscussionResponse(models.Model):   # 帖子回复
     discussion = models.ForeignKey(Discussion)

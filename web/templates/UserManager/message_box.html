@@ -13,12 +13,12 @@
         {% elif message.message_type == 3 %}
             {% if message.have_read == 0 %}NEW!{% endif %}
             <a href="{% url 'app1:his_home' message.sender.id %}">{{ message.sender.name }}</a> 为你在问题
-            <a href="{% url 'app1:show_discussion' message.discussion.id %}">{{ message.discussion.title }}</a> 中的回复
+            <a href="{% url 'app1:show_discussion' message.discussion.id 0 %}">{{ message.discussion.title }}</a> 中的回复
             "{{ message.discussion_response.content }}" 点赞了!<hr>
         {% elif message.message_type == 2 %}
             {% if message.have_read == 0 %}NEW!{% endif %}
             <a href="{% url 'app1:his_home' message.sender.id %}">{{ message.sender.name }}</a> 回答了你的问题
-            <a href="{% url 'app1:show_discussion' message.discussion.id %}">{{ message.discussion.title }}</a>
+            <a href="{% url 'app1:show_discussion' message.discussion.id 0 %}">{{ message.discussion.title }}</a>
             "{{ message.discussion_response.content }}" !<hr>
         {% elif message.message_type == 1 %}
             {% if message.have_read == 0 %}NEW!{% endif %}

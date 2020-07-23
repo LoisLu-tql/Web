@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 
 {% block content %}
-
+    <a href="{% url 'app1:random_blog' %}">随机文章</a><br>
+    <a href="{% url 'app1:random_discussion' %}">随机问题</a>
 {% endblock %}

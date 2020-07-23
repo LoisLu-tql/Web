@@ -12,6 +12,7 @@
     <div>author：<a href="{% url 'app1:his_home' article.author.id %}">{{ article.author.name }}</a></div>
     <hr>
     <p>{{ article.content | safe }}</p>  {# 为解决html内容无法显示的问题，添加“safe”，但也使网站易被攻击 #}
+    <h6>发布于{{ article.add_time }}</h6>
     <hr>
 
 {#    <input type="button" value="Delete" formtarget="_blank">#}
@@ -26,9 +27,11 @@
 
     {% if is_login %}
 {#        <span id="like" star_id="{{ article.owner.id }}" fan_id="{{ user.id }}">关注</span> &nbsp;&nbsp;&nbsp; <span>推荐</span>#}
-        <span id="like" star_id="{{ article.author.id }}" fan_id="{{ user.id }}">关注博主</span> &nbsp
-        <span id="recommend" article_id="{{ article.id }}" fan_id="{{ user.id }}" >{{ article.likes_num }}赞</span>&nbsp
-        <span id="mark" article_id="{{ article.id }}" fan_id="{{ user.id }}" >收藏</span>
+        <span id="like" star_id="{{ article.author.id }}" fan_id="{{ user.id }}">关注博主</span> &nbsp;
+        <span id="recommend" article_id="{{ article.id }}" fan_id="{{ user.id }}" >{{ article.likes_num }}赞</span> &nbsp;
+        <span id="mark" article_id="{{ article.id }}" fan_id="{{ user.id }}" >收藏</span> &nbsp;
+        <span>{{ article.comments_num }}回复</span> &nbsp;
+        <span>{{ article.read_num }}浏览</span> &nbsp;
         <br> <span id="AttentionHint"></span>
     {% endif %}
 
@@ -59,6 +62,7 @@
                 <div>
                     <a href="{% url 'app1:his_home' comment.owner.id %}">{{ comment.owner.name }}</a> <br>
                     <p>{{ comment.content }}</p>
+                    <h6>评论于{{ comment.add_time }}</h6>
                 </div><br>
             </li>
         {% empty %}
