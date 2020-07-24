@@ -12,6 +12,7 @@
 
 {% block content %}
     <h4>搜索结果</h4>
+    <p>最多回复</p>
     <ul>
         {% for aim_discussion in aim_discussions %}
             <li><a href="{% url 'app1:show_discussion' aim_discussion.id 0 %}">

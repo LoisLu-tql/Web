@@ -17,6 +17,7 @@
 
 {% block content %}
     <h4>搜索结果</h4>
+    <p>最热文章</p>
     <ul>
         {% for aim_blog in aim_blogs %}
             <li><a href="{% url 'app1:show_article' article_id=aim_blog.id %}">{{ aim_blog.title }}</a></li>

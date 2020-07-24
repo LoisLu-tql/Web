@@ -905,19 +905,19 @@ def edit_blog(request, article_id):
         article.title = request.POST.get('title')
         article.content = request.POST.get('content')
         article.save()
-        return HttpResponse('Edit successfully.')
+        return redirect(reverse('app1:show_article', kwargs={'article_id': article.id}))
 
 
 def search_blog(request):
     if request.method == 'POST':
         search_ob = request.POST.get('search_ob')
-        search_ob = search_ob.replace(' ','')
-        raw_sql = "select * from app1_article where title like concat(%s,%s,%s)"
+        search_ob = search_ob.replace(' ', '')
+        raw_sql = "select * from app1_article where title like concat(%s,%s,%s) order by -hot"
         pattern = re.compile('.{1}')
         search_ob = '%'.join(pattern.findall(search_ob))
         print(search_ob)
 
-        aim_blogs = Article.objects.raw(raw_sql,params=['%',search_ob,'%'])
+        aim_blogs = Article.objects.raw(raw_sql, params=['%',search_ob,'%'])
 
         # aim_blogs = Article.objects.filter(title__contains=search_ob)
         data = {
@@ -930,7 +930,7 @@ def search_discussion(request):
     if request.method == 'POST':
         search_ob = request.POST.get('search_ob')
         search_ob = search_ob.replace(' ','')
-        raw_sql = "select * from app1_discussion where title like concat(%s,%s,%s)"
+        raw_sql = "select * from app1_discussion where title like concat(%s,%s,%s) order by -comments_num"
         pattern = re.compile('.{1}')
         search_ob = '%'.join(pattern.findall(search_ob))
 

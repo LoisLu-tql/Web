@@ -11,15 +11,16 @@
         {% csrf_token %}
 {#        <span>标题：</span> <input type="text" name="title" value="{{ article.title }}"> <br>#}
 {#        <span>内容：</span> <textarea name="content">{{ article.content }}</textarea>#}
-        <span>标题：</span> <input type="text" name="title"> <br>
+        <span>标题：</span> <input type="text" name="title" value={{ article.title }}> <br>
         <div id="div1" class="toolbar">
         </div>
         <div style="padding: 5px 0; color: #ccc"> </div>
         <div id="div2" class="text">
-
+            {% autoescape off %}
             <p>{{ article.content }}</p>
+            {% endautoescape %}
         </div>
-        <textarea id="text1"></textarea>
+        <textarea id="text1" name="content" style="display: none"></textarea>
         <button>发布</button>
     </form>
 {% endblock %}

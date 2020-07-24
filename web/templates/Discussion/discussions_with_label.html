@@ -21,8 +21,8 @@
         <h3>心理咨询</h3>
     {% elif label_type == '10' %}
         <h3>跳蚤市场</h3>
-
     {% endif %}
+    <p>最新</p>
     <ul>
         {% for discussion in discussions %}
             <li><a href="{% url 'app1:show_discussion' discussion.id 0 %}">{{ discussion.title }}</a></li>
