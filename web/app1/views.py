@@ -1118,23 +1118,38 @@ def message_box(request):
         return render(request, 'UserManager/message_box.html', context=data)
 
 
+# def get_label(request, label_type):
+#     labels = BlogLabel.objects.all().order_by('-id')
+#     label_type_backup = int(label_type)
+#     cor_articles = []
+#     for label in labels:
+#         while label_type_backup > 1:
+#             label.have_label = label.have_label // 10
+#             label_type_backup -= 1
+#         if label.have_label % 10 == 1:
+#             article = Article.objects.get(id=label.article_id)
+#             cor_articles.append(article)
+#         label_type_backup = int(label_type)
+#     data = {
+#         'articles': cor_articles,
+#         'label_type': label_type,
+#     }
+#     return render(request, 'Blog/blogs_with_label.html', context=data)
+
 def get_label(request, label_type):
     labels = BlogLabel.objects.all().order_by('-id')
     label_type_backup = int(label_type)
     cor_articles = []
     for label in labels:
-        while label_type_backup > 1:
-            label.have_label = label.have_label // 10
-            label_type_backup -= 1
-        if label.have_label % 10 == 1:
+        if label.have_label & label_type_backup : #   后加"== label_type_backup"取交集
             article = Article.objects.get(id=label.article_id)
             cor_articles.append(article)
-        label_type_backup = int(label_type)
     data = {
         'articles': cor_articles,
         'label_type': label_type,
+        'label_type_backup': label_type_backup,
     }
-    return render(request, 'Blog/blogs_with_label.html', context=data)
+    return render(request, 'Blog/blogs_with_labels.html', context=data)
 
 
 def get_d_label(request, label_type):

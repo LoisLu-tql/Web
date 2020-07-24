@@ -1,0 +1,45 @@
+{% extends 'Blog/base_blog.html' %}
+
+{% block content %}
+    <span>学科区</span><br>
+        <input type="checkbox" class="blabel" id="blabel0">高等数学
+        <input type="checkbox" class="blabel" id="blabel1">线性代数
+        <input type="checkbox" class="blabel" id="blabel2">数据结构与算法
+        <input type="checkbox" class="blabel" id="blabel3">大学物理
+        <input type="checkbox" class="blabel" id="blabel4">概率论
+        <br>
+        <span>专业区</span><br>
+        <input type="checkbox" class="blabel" id="blabel5">计算机科学与技术
+        <input type="checkbox" class="blabel" id="blabel6">机电工程与自动化
+        <input type="checkbox" class="blabel" id="blabel7">电子与信息工程
+        <input type="checkbox" class="blabel" id="blabel8">经济管理
+        <input type="checkbox" class="blabel" id="blabel9">材料与环境
+        <br>
+    <p>最新</p>
+    <ul>
+        {% for article in articles %}
+            <li><a href="{% url 'app1:show_article' article.id %}">{{ article.title }}</a></li>
+        {% empty %}
+            <li>No Article ! </li>
+        {% endfor %}
+    </ul>
+{% endblock %}
+
+{% block js_code %}
+    <script type="text/javascript" src="/static/js/my_js/label/choose_blabel.js"></script>
+    <script type="text/javascript">
+        var str = "#blabel" ;
+        for(var i=0;i<=9;i++){
+            var str_now = str + i ;
+            if((1<<i)&({{ label_type_backup }})){
+                $(str_now).prop('checked',true) ;
+            } else $(str_now).prop('checked',false) ;
+            $(str_now).click(i, function (event) {
+                var targ = (1<<event.data)^{{ label_type_backup }} ;
+                {#alert(targ) ;#}
+                {#window.location.href = "{% url 'app1:get_label' 1 %}" ;#}
+                window.location.href = "/getlabel/"+targ+"/" ;
+            })
+        }
+    </script>
+{% endblock %}

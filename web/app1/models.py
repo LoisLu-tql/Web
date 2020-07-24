@@ -9,7 +9,7 @@ class Person(models.Model):   # 用户
     icon = models.ImageField(upload_to='icons/%Y/%m', null=True, default='icons/2020/03/default.jpg')
     sex = models.IntegerField(default=0)  # 0-unknown  1-boy  2-girl
     motto = models.CharField(max_length=128, null=True)
-    fans_num = models.IntegerField(null=True, default=0)
+    fans_num = models.IntegerField(default=0)
 
 class ArticleTag(models.Model):
     name = models.CharField(max_length=32)
