@@ -20,7 +20,7 @@ from django.utils import timezone
 
 from app1.models import Article, Person, Likes, Discussion, LikeArticle, MarkArticle, ArticleComment, LikeDiscussion, \
     MarkDiscussion, DiscussionResponse, LikeDiscussionResponse, Notice, BlogLabel, DiscussionLabel, UserLabel, \
-    UserBlogLabel, ReadArticle
+    UserBlogLabel, ReadArticle, ChatRoom, ChatContent
 from app1.tools import get_color, generate_code
 from web1 import settings
 
@@ -69,6 +69,27 @@ def home(request):
     paginator = Paginator(articles, per_page)
     page_objects = paginator.page(page_now)
 
+    unreads = Notice.objects.filter(Q(have_read=0) & Q(receiver_id=user.id))
+    unreads_num = len(unreads)
+
+    rooms = ChatRoom.objects.filter(Q(sender_id=user.id) | Q(receiver_id=user.id))
+    for room in rooms:
+        if room.sender_id == user.id:
+            messages = ChatContent.objects.filter(Q(message_type=0) & Q(have_read=0) & Q(message_room_id=room.id))
+            room.sender_unread_num = len(messages)
+            room.save()
+        else:
+            messages = ChatContent.objects.filter(Q(message_type=1) & Q(have_read=0) & Q(message_room_id=room.id))
+            room.receiver_unread_num = len(messages)
+            room.save()
+    unread_talk_num = 0
+    my_chatrooms = ChatRoom.objects.filter(sender_id=user.id)
+    for my_chatroom in my_chatrooms:
+        unread_talk_num += my_chatroom.sender_unread_num
+    my_chatrooms_again = ChatRoom.objects.filter(receiver_id=user.id)
+    for my_chatroom_again in my_chatrooms_again:
+        unread_talk_num += my_chatroom_again.receiver_unread_num
+
     context = {
         'title': username + '\'s home',
         'user': user,
@@ -76,6 +97,8 @@ def home(request):
         'page_objects': page_objects,
         'page_range': paginator.page_range,  # paginator.page_range用于获取一共有多少页
         'page_now': page_now,
+        'unreads_num': unreads_num,
+        'unread_talk_num': unread_talk_num,
     }
     return render(request, 'UserManager/home.html', context=context)
 
@@ -379,6 +402,9 @@ def mark_article(request):  # 给博客点赞
             'msg': 'already exists',
         }
     else:
+        article = Article.objects.get(id=article_id)
+        article.collects_num += 1
+        article.save()
         Relation = MarkArticle()
         Relation.article_id = article_id
         Relation.fan_id = fan_id
@@ -603,7 +629,7 @@ def show_discussion(request, discussion_id, order_type):
         is_login = False
     if is_login:
         if username == discussion.owner.name:
-            is_author = False
+            is_author = True
     #0-热度 1-最新
     if order_type == '1':
         comments = DiscussionResponse.objects.filter(discussion=discussion).order_by('-id')
@@ -1061,12 +1087,29 @@ def my_collected_discussions(request):
 def delete_comment(request, comment_id):
     try:
         comment = DiscussionResponse.objects.get(pk=comment_id)
-        discussion_id = comment.discussion.id
+        discussion = comment.discussion
+        discussion.comments_num -= 1
+        discussion.save()
         user = comment.owner
         if user.name != request.session['username']:
             return render(request, 'Wrong Page/noRight.html')
         comment.delete()
-        return redirect(reverse('app1:show_discussion', kwargs={'discussion_id': discussion_id, 'order_type': '0'}))
+        return redirect(reverse('app1:show_discussion', kwargs={'discussion_id': discussion.id, 'order_type': '0'}))
+    except Exception as e:
+        return HttpResponse("此评论不存在哟~")
+
+
+def delete_blog_comment(request, comment_id):
+    try:
+        comment = ArticleComment.objects.get(pk=comment_id)
+        article = comment.article
+        article.comments_num -= 1
+        article.save()
+        user = comment.owner
+        if user.name != request.session['username']:
+            return render(request, 'Wrong Page/noRight.html')
+        comment.delete()
+        return redirect(reverse('app1:show_article', kwargs={'article_id': article.id}))
     except Exception as e:
         return HttpResponse("此评论不存在哟~")
 
@@ -1231,7 +1274,7 @@ def calculate_hot(request):
         else: #time_value随用户量作相应变化
             time_value = 0.01
         article.hot = article.comments_num + article.likes_num + (article.author.fans_num / 10)\
-                      + (article.read_num / 10) + time_value
+                      + (article.read_num / 10) + time_value + article.collects_num
         article.save()
     return HttpResponse("Modify successfully.")
 
@@ -1244,3 +1287,110 @@ def random_blog(request):
         return redirect(url)
     else:
         return HttpResponse("暂时找不到文章噢,请稍后再试一次~")
+
+
+def chat(request, receiver_id, sender_id):
+    if request.method == 'GET':
+        if ChatRoom.objects.filter(Q(receiver_id=receiver_id) & Q(sender_id=sender_id)).exists():
+            room = ChatRoom.objects.filter(Q(receiver_id=receiver_id) & Q(sender_id=sender_id)).first()
+            messages = ChatContent.objects.filter(message_room=room).order_by('message_time')
+            for message in messages:
+                if message.message_type == 0:
+                    message.have_read = 1
+                    message.save()
+            correspond = 1
+        elif ChatRoom.objects.filter(Q(receiver_id=sender_id) & Q(sender_id=receiver_id)).exists():
+            room = ChatRoom.objects.filter(Q(receiver_id=sender_id) & Q(sender_id=receiver_id)).first()
+            messages = ChatContent.objects.filter(message_room=room).order_by('message_time')
+            for message in messages:
+                if message.message_type == 1:
+                    message.have_read = 1
+                    message.save()
+            correspond = 0
+        else:
+            room = ChatRoom()
+            room.receiver_id = receiver_id
+            room.sender_id = sender_id
+            room.save()
+            messages = []
+            correspond = 1
+
+        sender = Person.objects.get(id=sender_id)
+        receiver = Person.objects.get(id=receiver_id)
+        data = {
+            'messages': messages,
+            'correspond': correspond,
+            'sender': sender,
+            'receiver': receiver,
+        }
+        return render(request, 'UserManager/chat.html', context=data)
+
+    if request.method == 'POST':
+        new_message = request.POST.get('new_message')
+        if ChatRoom.objects.filter(Q(receiver_id=receiver_id) & Q(sender_id=sender_id)).exists():
+            room = ChatRoom.objects.filter(Q(receiver_id=receiver_id) & Q(sender_id=sender_id)).first()
+            correspond = 1
+        else:
+            room = ChatRoom.objects.filter(Q(receiver_id=sender_id) & Q(sender_id=receiver_id)).first()
+            correspond = 0
+
+        new = ChatContent()
+        new.message = new_message
+        new.message_type = correspond
+        new.message_room = room
+        new.save()
+        return redirect(reverse('app1:chat', kwargs={'receiver_id': receiver_id, 'sender_id': sender_id}))
+
+
+def chatrooms(request):
+    username = request.session['username']
+    user = Person.objects.get(name=username)
+    rooms = ChatRoom.objects.filter(Q(sender_id=user.id) | Q(receiver_id=user.id))
+    receivers = []
+    for room in rooms:
+        if room.sender_id == user.id:
+            receiver = Person.objects.get(id=room.receiver_id)
+            receivers.append(receiver)
+            messages = ChatContent.objects.filter(Q(message_type=0) & Q(have_read=0) & Q(message_room_id=room.id))
+            room.sender_unread_num = len(messages)
+            room.save()
+        else:
+            receiver = Person.objects.get(id=room.sender_id)
+            receivers.append(receiver)
+            messages = ChatContent.objects.filter(Q(message_type=1) & Q(have_read=0) & Q(message_room_id=room.id))
+            room.receiver_unread_num = len(messages)
+            room.save()
+    data = {
+        'receivers': receivers,
+        'user': user,
+        'rooms': rooms,
+    }
+    return render(request, 'UserManager/chatrooms.html', context=data)
+
+
+def delete_chat(request, room_id):
+    room = ChatRoom.objects.get(id=room_id)
+    messages = ChatContent.objects.filter(message_room_id=room_id)
+    for message in messages:
+        message.delete()
+    room.delete()
+    return redirect(reverse('app1:chatrooms'))
+
+
+def uncollect_blog(request, article_id):
+    username = request.session['username']
+    user = Person.objects.get(name=username)
+    relation = MarkArticle.objects.filter(Q(article_id=article_id) & Q(fan_id=user.id))
+    relation.delete()
+    article = Article.objects.get(id=article_id)
+    article.collects_num -= 1
+    article.save()
+    return redirect(reverse('app1:my_collected_articles'))
+
+
+def uncollect_discussion(request, discussion_id):
+    username = request.session['username']
+    user = Person.objects.get(name=username)
+    relation = MarkDiscussion.objects.filter(Q(discussion_id=discussion_id) & Q(fan_id=user.id))
+    relation.delete()
+    return redirect(reverse('app1:my_collected_discussions'))

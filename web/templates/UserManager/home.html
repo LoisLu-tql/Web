@@ -24,7 +24,8 @@
         <li><a href="{% url 'app1:my_fans' %}">我的粉丝</a></li>
         <li><a href="{% url 'app1:personal_information' %}">个人信息</a></li>
         <li><a href="{% url 'app1:change_password_check' %}">修改密码</a></li>
-        <li><a href="{% url 'app1:message_box' %}">消息列表</a></li>
+        <li><a href="{% url 'app1:message_box' %}">消息列表</a> {{ unreads_num }}</li>
+        <li><a href="{% url 'app1:chatrooms' %}">会话列表</a> {{ unread_talk_num }}</li>
         <li><a href="{% url 'app1:index' %}">返回主页</a></li>
     </ul>
 

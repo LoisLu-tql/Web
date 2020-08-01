@@ -5,7 +5,8 @@
     <ul>
         {% for discussion in discussions %}
             <li>
-                <div><a href="{% url 'app1:show_discussion' discussion_id=discussion.id 0 %}">{{ discussion.title }}</a></div>
+                <div><a href="{% url 'app1:show_discussion' discussion.id 0 %}">{{ discussion.title }}</a></div>
+                <a href="{% url 'app1:uncollect_discussion' discussion.id %}" style="float: right">取消收藏</a>
                 <hr>
             </li>
             {% empty %}

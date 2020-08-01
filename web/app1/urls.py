@@ -93,6 +93,8 @@ urlpatterns = [
 
     url(r'^deletecomment/(?P<comment_id>\d+)/', views.delete_comment, name='delete_comment'),
 
+    url(r'^deleteblogcomment/(?P<comment_id>\d+)/', views.delete_blog_comment, name='delete_blog_comment'),
+
     url(r'^unlikerelationship/', views.unlike_relationship, name='unlike_relationship'),
 
     url(r'^messagebox/', views.message_box, name='message_box'),
@@ -108,6 +110,16 @@ urlpatterns = [
     url(r'^randomblog/', views.random_blog, name='random_blog'),
 
     url(r'^calculatehot/', views.calculate_hot, name='calculate_hot'),#刷新博客热度排名
+
+    url(r'^chat/(?P<receiver_id>\d+)/(?P<sender_id>\d+)/', views.chat, name='chat'),
+
+    url(r'^chatrooms/', views.chatrooms, name='chatrooms'),
+
+    url(r'^deletechat/(?P<room_id>\d+)/', views.delete_chat, name='delete_chat'),
+
+    url(r'^uncollectblog/(?P<article_id>\d+)/', views.uncollect_blog, name='uncollect_blog'),
+
+    url(r'^uncollectdiscussion/(?P<discussion_id>\d+)/', views.uncollect_discussion, name='uncollect_discussion'),
 
     # url(r'^refreshlabel/', views.refresh_label, name = 'refresh_label'),
 

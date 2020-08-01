@@ -29,7 +29,7 @@
 {#        <span id="like" star_id="{{ article.owner.id }}" fan_id="{{ user.id }}">关注</span> &nbsp;&nbsp;&nbsp; <span>推荐</span>#}
         <span id="like" star_id="{{ article.author.id }}" fan_id="{{ user.id }}">关注博主</span> &nbsp;
         <span id="recommend" article_id="{{ article.id }}" fan_id="{{ user.id }}" >{{ article.likes_num }}赞</span> &nbsp;
-        <span id="mark" article_id="{{ article.id }}" fan_id="{{ user.id }}" >收藏</span> &nbsp;
+        <span id="mark" article_id="{{ article.id }}" fan_id="{{ user.id }}" >{{ article.collects_num }}收藏</span> &nbsp;
         <span>{{ article.comments_num }}回复</span> &nbsp;
         <span>{{ article.read_num }}浏览</span> &nbsp;
         <br> <span id="AttentionHint"></span>
@@ -62,7 +62,12 @@
                 <div>
                     <a href="{% url 'app1:his_home' comment.owner.id %}">{{ comment.owner.name }}</a> <br>
                     <p>{{ comment.content }}</p>
-                    <h6>评论于{{ comment.add_time }}</h6>
+                    <h6>
+                        评论于{{ comment.add_time }}
+                        {% if user.id == comment.owner.id  %}
+                            <span><a href="{% url 'app1:delete_blog_comment' comment.id %}">删除评论</a></span>
+                        {% endif %}
+                    </h6>
                 </div><br>
             </li>
         {% empty %}

@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h4>{{ receiver.name }}</h4>
+    <div style="overflow: scroll; width: 1000px; height: 400px;">
+        {% if correspond %}
+            {% for message in messages %}
+                {% if not message.message_type %}
+                    <div style="float: left; clear: both">
+                        {{ receiver.name }} {{ message.message_time }}<br>
+                        {{ message.message }}
+                    </div>
+                {% else %}
+                    <div style="float: right; clear: both">
+                        {{ sender.name }} {{ message.message_time }}<br>
+                        {{ message.message }}
+                    </div>
+                {% endif %}
+                <br>
+            {% endfor %}
+        {% else %}
+            {% for message in messages %}
+                {% if not message.message_type %}
+                    <div style="float: right; clear: both">
+                        {{ sender.name }} {{ message.message_time }}<br>
+                        {{ message.message }}
+                    </div>
+                {% else %}
+                    <div style="float: left; clear: both">
+                        {{ receiver.name }} {{ message.message_time }}<br>
+                        {{ message.message }}
+                    </div>
+                {% endif %}
+                <br>
+            {% endfor %}
+        {% endif %}
+    </div>
+    <div>
+        <form action="{% url 'app1:chat' receiver.id sender.id %}" method="post">
+            {% csrf_token %}
+            <textarea type="text" name="new_message" style="width: 954px; height: 100px;"></textarea>
+            <button>发送</button>
+        </form>
+    </div>
+{% endblock %}

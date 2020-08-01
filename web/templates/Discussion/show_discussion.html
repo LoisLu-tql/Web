@@ -9,13 +9,15 @@
 {% block content %}
     <h2>{{ discussion.title }}</h2>
     <div>提问者：<a href="{% url 'app1:his_home' discussion.owner.id %}">{{ discussion.owner.name }}</a></div>
+    {% if is_author %}
+        <a href="{% url 'app1:delete_discussion' discussion_id=discussion.id %}">删除</a>
+    {% endif %}
     <hr>
     <p>{{ discussion.content | safe }}</p>  {# 为解决html内容无法显示的问题，添加“safe”，但也使网站易被攻击 #}
     <hr>
 
-    {% if is_author %}
-        <a href="{% url 'app1:delete_discussion' discussion_id=discussion.id %}">删除</a>
-    {% elif is_login %}
+
+    {% if is_login %}
         <span id="like" star_id="{{ discussion.owner.id }}" fan_id="{{ user.id }}">关注提问者</span> &nbsp;
         <span id="recommend" discussion_id="{{ discussion.id }}" fan_id="{{ user.id }}" >赞</span> &nbsp;
         <span id="mark" discussion_id="{{ discussion.id }}" fan_id="{{ user.id }}" >收藏</span> &nbsp;
@@ -44,7 +46,9 @@
                     <a href="{% url 'app1:recommend_discussion_response' comment.id user.id %}">
                         点赞
                     </a>&nbsp;&nbsp;
-                    <span><a href="{% url 'app1:delete_comment' comment.id %}">删除评论</a></span>
+                    {% if user.id == comment.owner.id  %}
+                        <span><a href="{% url 'app1:delete_comment' comment.id %}">删除评论</a></span>
+                    {% endif %}
                     <h6>回答于{{ comment.add_time }}</h6>
                     <span id="AttentionHint2"></span>
                 </div><br>

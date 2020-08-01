@@ -14,31 +14,30 @@
     </script>
     <script language="javascript" type="text/javascript">
 
-    var maxChoices = 3;
-    var flag = 0;
-    function onCheckBox(checkbox) {
-        var items = document.getElementsByName("item");
-        if(checkbox.checked) {
-            flag ++;
-        }
-        else {
-            flag --;
-        }
-        if(flag < maxChoices) {
-            for(var i=0; i<items.length; i++) {
-                if(!items[i].checked) {
-                    items[i].disabled = false;
+        var maxChoices = 3;
+        var flag = 0;
+
+        function onCheckBox(checkbox) {
+            var items = document.getElementsByName("item");
+            if (checkbox.checked) {
+                flag++;
+            } else {
+                flag--;
+            }
+            if (flag < maxChoices) {
+                for (var i = 0; i < items.length; i++) {
+                    if (!items[i].checked) {
+                        items[i].disabled = false;
+                    }
+                }
+            } else {
+                for (var i = 0; i < items.length; i++) {
+                    if (!items[i].checked) {
+                        items[i].disabled = true;
+                    }
                 }
             }
         }
-        else {
-            for(var i=0; i<items.length; i++) {
-                if(!items[i].checked) {
-                    items[i].disabled = true;
-                }
-            }
-        }
-    }
 
     </script>
 
@@ -49,13 +48,13 @@
 {% block content %}
     <form action="{% url 'app1:add_article' %}" id="formlist" method="post" onsubmit="return check()">
         {% csrf_token %}
-        <span>标题：</span> <input type="text" name="title"> <br>
-{#        <span>内容：</span> <textarea name="content"></textarea><hr>#}
+        <span>标题：</span> <input type="text" name="title" value="标题.."> <br>
+        {#        <span>内容：</span> <textarea name="content"></textarea><hr>#}
         <div id="div1" class="toolbar">
         </div>
-        <div style="padding: 5px 0; color: #ccc"> </div>
+        <div style="padding: 5px 0; color: #ccc"></div>
         <div id="div2" class="text"> <!--可使用 min-height 实现编辑区域自动增加高度-->
-            <p>请输入内容</p>
+            <p>请输入内容..</p>
         </div>
         <textarea name="content" id="text1" style="display:none"></textarea>
         <span>添加标签,让你的文章被更多人看到!</span> <br>
@@ -74,16 +73,16 @@
         <input type="checkbox" value="10" name="item" onClick="onCheckBox(this)">材料与环境
         <br>
         <button>发布</button>
-{#        <input type="button" id="submit_button" value="提交">#}
+        {#        <input type="button" id="submit_button" value="提交">#}
     </form>
 
     {# 个人标签相关 #}
-{#    <hr>#}
-{#    <span>已添加标签:</span>#}
-{#    <ul id="selectedlabels">#}
-{##}
-{#    </ul>#}
-{#    <span id="backout">撤销</span> <br>#}
+    {#    <hr>#}
+    {#    <span>已添加标签:</span>#}
+    {#    <ul id="selectedlabels">#}
+    {##}
+    {#    </ul>#}
+    {#    <span id="backout">撤销</span> <br>#}
     <span>我的标签:</span>
     <ul id="ulabels">
         {% for label in userlabels %}
@@ -105,12 +104,14 @@
         .toolbar {
             border: 1px solid #ccc;
         }
+
         .text {
             border: 1px solid #ccc;
             height: 400px;
         }
+
         .userlabels {
-            width: 60px ;
+            width: 60px;
         }
     </style>
 {% endblock %}
@@ -123,6 +124,21 @@
     <script type="text/javascript">
         var E = window.wangEditor
         var editor1 = new E('#div2')  // 两个参数也可以传入 elem 对象，class 选择器
+        editor1.customConfig.uploadImgShowBase64 = true //upload pics
+        editor1.customConfig.colors = [
+            '#000000',
+            '#eeece0',
+            '#1c487f',
+            '#4d80bf',
+            '#c24f4a',
+            '#6b8e23',
+            '#7b5ba1',
+            '#46acc8',
+            '#f9963b',
+            '#ffffff',
+            '#ffff00',
+            '#ffc0cb',
+        ]
         {#editor1.create()#}
         var $text1 = $('#text1')
         editor1.customConfig.onchange = function (html) {

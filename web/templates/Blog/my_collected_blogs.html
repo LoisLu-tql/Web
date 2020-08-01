@@ -6,6 +6,7 @@
         {% for article in articles %}
             <li>
                 <div><a href="{% url 'app1:show_article' article_id=article.id %}">{{ article.title }}</a></div>
+                <a href="{% url 'app1:uncollect_blog' article.id %}" style="float: right">取消收藏</a>
                 <hr>
             </li>
             {% empty %}

@@ -16,12 +16,13 @@ class ArticleTag(models.Model):
     owner = models.ForeignKey(Person)
     add_time = models.DateTimeField(auto_now_add=True)
 
-class Article(models.Model):  # 博客文章 #时间-梯度 访问人数/10 作者粉丝数/10 点赞数 评论数
+class Article(models.Model):  # 博客文章 #时间-梯度 访问人数/10 作者粉丝数/10 点赞数 评论数 收藏数
     title = models.CharField(max_length=16)
     content = HTMLField()
     add_time = models.DateTimeField(auto_now_add=True)
     likes_num = models.IntegerField(default=0)
     comments_num = models.IntegerField(null=True, default=0)
+    collects_num = models.IntegerField(default=0)
     read_num = models.IntegerField(null=True, default=0)
     author = models.ForeignKey(Person, null=True)
     tag = models.ForeignKey(ArticleTag, null=True)
@@ -124,3 +125,16 @@ class UserBlogLabel(models.Model):    # 维护标签与其对应的文章
 class UserDiscussionLabel(models.Model):   # 维护标签与讨论的
     discussion_id = models.IntegerField()
     label_id = models.IntegerField()
+
+class ChatRoom(models.Model):
+    sender_id = models.IntegerField()
+    receiver_id = models.IntegerField()
+    sender_unread_num = models.IntegerField(default=0, null=True)
+    receiver_unread_num = models.IntegerField(default=0, null=True)
+
+class ChatContent(models.Model):
+    message = models.CharField(max_length=256)
+    message_time = models.DateTimeField(auto_now_add=True)
+    message_room = models.ForeignKey(ChatRoom)
+    message_type = models.IntegerField() #send=1  receive=0
+    have_read = models.IntegerField(default=0, null=True)

@@ -3,12 +3,12 @@
 {% block content %}
     <form action="{% url 'app1:add_discussion' %}" method="post">
         {% csrf_token %}
-        <span>标题：</span> <input type="text" name="title"> <br>
+        <span>标题：</span> <input type="text" name="title" value="标题.."> <br>
         <div id="div1" class="toolbar">
         </div>
         <div style="padding: 5px 0; color: #ccc"> </div>
         <div id="div2" class="text">
-            <p>请输入内容</p>
+            <p>请输入内容..</p>
         </div>
         <textarea name="content" id="text1" style="display:none"></textarea>
         <span>添加标签,让你的问题被更多人看到!</span><br>
@@ -81,6 +81,21 @@
     <script type="text/javascript">
         var E = window.wangEditor
         var editor1 = new E('#div2')  // 两个参数也可以传入 elem 对象，class 选择器
+        editor1.customConfig.uploadImgShowBase64 = true //upload pictures
+        editor1.customConfig.colors = [
+            '#000000',
+            '#eeece0',
+            '#1c487f',
+            '#4d80bf',
+            '#c24f4a',
+            '#6b8e23',
+            '#7b5ba1',
+            '#46acc8',
+            '#f9963b',
+            '#ffffff',
+            '#ffff00',
+            '#ffc0cb',
+        ]
         {#editor1.create()#}
         var $text1 = $('#text1')
         editor1.customConfig.onchange = function (html) {

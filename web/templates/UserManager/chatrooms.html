@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    {% for receiver in receivers %}
+        <div>
+            <style>#icon{width:40px; height: 40px; border-radius: 50%}</style>
+            <img id="icon" src="/static/uploadfiles/{{ receiver.icon }}" alt="icon">
+            <a href="{% url 'app1:chat' receiver.id user.id %}">{{ receiver.name }}</a>
+            {% for room in rooms %}
+                {% if room.receiver_id == receiver.id %}
+                    {{ room.sender_unread_num }}
+                    <a href="{% url 'app1:delete_chat' room.id %}" style="float: right;">删除会话</a>
+                {% endif %}
+                {% if room.sender_id == receiver.id %}
+                    {{ room.receiver_unread_num }}
+                    <a href="{% url 'app1:delete_chat' room.id %}" style="float: right;">删除会话</a>
+                {% endif %}
+            {% endfor %}
+        </div>
+    {% empty %}
+        <p>还没有聊天哦~</p>
+    {% endfor %}
+
+{% endblock %}

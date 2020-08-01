@@ -4,9 +4,14 @@
     <form action="{% url 'app1:personal_information' %}" method="post">
         {% csrf_token %}
         <div> <span>username: {{ user.name }}</span> </div>
-        <div> <span>email: </span> <input name="email" id="email" type="text">  </div>
-        <div> <span>sex: </span> <input name="sex" id="sex" type="text"> </div>
-        <div> <span>motto: </span> <input name="motto" id="motto" type="text"> </div>
+        <div> <span>email: </span> <input name="email" id="email" type="text" value="{{ user.mail }}">  </div>
+{#        <div> <span>sex: </span> <input name="sex" id="sex" type="text"> </div>#}
+        <div>
+            sex:<input type="radio" value="0" name="sex" checked="checked">Unknown
+            <input type="radio" value="1" name="sex">Male
+            <input type="radio" value="2" name="sex">Female
+        </div>
+        <div> <span>motto: </span> <input name="motto" id="motto" type="text" value="{{ user.motto }}"></div>
         <button>提交修改</button>
     </form>
 {% endblock %}
@@ -19,5 +24,6 @@
         sex.value = "{{ user.sex }}" ;
         var motto = document.getElementById("motto");
         motto.value = "{{ user.motto }}" ;
+
     </script>
 {% endblock %}
