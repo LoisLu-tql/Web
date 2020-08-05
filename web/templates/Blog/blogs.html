@@ -36,7 +36,13 @@
 
     <ul>
         {% for article in page_objects %}
-            <li><a href="{% url 'app1:show_article' article_id=article.id %}">{{ article.title }}</a></li>
+            <li>
+                <a href="{% url 'app1:show_article' article_id=article.id %}">{{ article.title }}</a>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <span>{{ article.tag2 }}</span>
+                <br>
+                <span>{{ article.content }}</span>
+            </li>
         {% empty %}
             <li>No Article ! </li>
         {% endfor %}

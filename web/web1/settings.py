@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     # My apps
     'app1',
     'tinymce',
+    'search_engine',
 ]
 
 MIDDLEWARE = [

@@ -21,8 +21,11 @@ from django.utils import timezone
 from app1.models import Article, Person, Likes, Discussion, LikeArticle, MarkArticle, ArticleComment, LikeDiscussion, \
     MarkDiscussion, DiscussionResponse, LikeDiscussionResponse, Notice, BlogLabel, DiscussionLabel, UserLabel, \
     UserBlogLabel, ReadArticle, ChatRoom, ChatContent
-from app1.tools import get_color, generate_code
+from app1.tools import get_color, generate_code, cut_content
+from search_engine.tools import delete_htmltag
 from web1 import settings
+
+from search_engine.wiser import add_document, search_blog_by_str
 
 
 def helloworld(request):
@@ -221,7 +224,10 @@ def add_article(request):
             article.title = request.POST.get('title')
             article.content = request.POST.get('content')
             article.author = user
+            article.tag2 = request.POST.get('tag2')
             article.save()
+
+            add_document(article.id)  # 为文章添加倒排索引 (用于搜索)
 
             blog_label = BlogLabel()
             blog_label.article_id = article.id
@@ -236,7 +242,11 @@ def add_article(request):
                 blog_label.have_label = blog_label.have_label // 2
             while len(s) > 0:
                 binstring = binstring + str(s.pop())
-            blog_label.have_label = int(binstring)
+            print(binstring)
+            if binstring:
+                blog_label.have_label = int(binstring)
+            else :
+                blog_label.have_label = 0
             blog_label.save()
 
             tot = request.POST.get("tot_label")
@@ -441,7 +451,7 @@ def my_blog(request):
     articles = Article.objects.filter(author=user).order_by('-id')
 
     for article in articles:
-        article.content = article.content[:90]
+        article.content = cut_content(article.content)
 
     ulabels = UserLabel.objects.filter(owner=user)
 
@@ -542,6 +552,12 @@ def blogs(request, order_type):
     else:
         blogs = Article.objects.all().order_by('-id')  # 新发表的(id值大的)排在前面
 
+    # 展示文章内容的前50个字
+    for blog in blogs:
+        blog.content = delete_htmltag(blog.content)
+        if len(blog.content) > 90 :
+            blog.content = blog.content[:90] + ' ...'
+
     paginator = Paginator(blogs, per_page)
     page_objects = paginator.page(page_now)
 
@@ -549,11 +565,12 @@ def blogs(request, order_type):
     # if label_now:
     #     blogs = blogs.filter()
 
-    for blog in blogs:
-        blog.content = blog.content[:50]
-
     random_range = len(blogs)
     aim_id = random.randint(1, random_range)
+
+    for blog in blogs :
+        print("blog tag:")
+        print(blog.tag2)
 
     data = {
         'blogs': blogs,
@@ -563,6 +580,7 @@ def blogs(request, order_type):
         'title': 'Blog',
         'aim_id': aim_id,
     }
+
     return render(request, 'Blog/blogs.html', context=data)
 
 
@@ -937,15 +955,13 @@ def edit_blog(request, article_id):
 def search_blog(request):
     if request.method == 'POST':
         search_ob = request.POST.get('search_ob')
-        search_ob = search_ob.replace(' ', '')
-        raw_sql = "select * from app1_article where title like concat(%s,%s,%s) order by -hot"
-        pattern = re.compile('.{1}')
-        search_ob = '%'.join(pattern.findall(search_ob))
-        print(search_ob)
 
-        aim_blogs = Article.objects.raw(raw_sql, params=['%',search_ob,'%'])
+        aim_blogs = search_blog_by_str(search_ob)
+        for blog in aim_blogs :
+            blog.content = delete_htmltag(blog.content)
+            if len(blog.content) > 90 :
+                blog.content = blog.content[:90] + ' ...'
 
-        # aim_blogs = Article.objects.filter(title__contains=search_ob)
         data = {
             'aim_blogs': aim_blogs,
         }
@@ -1004,11 +1020,16 @@ def his_home(request, person_id):
         return render(request, 'UserManager/home.html', context=context)
 
     me = Person.objects.get(name=my_name)
+    lks = Likes.objects.filter(Q(star_id=person_id) & Q(fan_id=me.id))
+    is_his_fan = False
+    if lks.exists() :
+        is_his_fan = True
     data = {
         'title': user.name + "'s home",
         'user': user,
         'me': me,
         'icon_url': '/static/uploadfiles/' + user.icon.url,
+        'is_fan': is_his_fan,
     }
     return render(request, 'UserManager/his_home.html', context=data)
 

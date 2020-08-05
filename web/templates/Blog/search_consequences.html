@@ -3,7 +3,6 @@
 {% block head %}
     <div>
         <a href="{% url 'app1:add_article' %}">写博客</a> &nbsp&nbsp&nbsp&nbsp
-{#        <span>...搜索...</span>#}
     </div>
     <form action="{% url 'app1:search_blog' %}" method="post">
         {% csrf_token %}
@@ -20,7 +19,14 @@
     <p>最热文章</p>
     <ul>
         {% for aim_blog in aim_blogs %}
-            <li><a href="{% url 'app1:show_article' article_id=aim_blog.id %}">{{ aim_blog.title }}</a></li>
+            <li>
+                <hr>
+                <a href="{% url 'app1:show_article' article_id=aim_blog.id %}">{{ aim_blog.title }}</a>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <span>{{ aim_blog.tag2 }}</span>
+                <br>
+                <span>{{ aim_blog.content }}</span>
+            </li>
         {% empty %}
             <span>没有找到这样的博客哦..</span>
             <a href="{% url 'app1:add_article' %}">我要创作?</a>

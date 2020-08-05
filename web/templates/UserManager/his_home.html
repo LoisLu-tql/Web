@@ -16,6 +16,7 @@
 
     <span id="like" star_id="{{ user.id }}" fan_id="{{ me.id }}">关注</span>
     <span id="unlike" star_id="{{ user.id }}" fan_id="{{ me.id }}">取消关注</span>
+
     <span id="AttentionHint"></span>
     <a href="{% url 'app1:chat' user.id me.id %}">私信</a>
     <ul>

@@ -1,4 +1,5 @@
 import random
+from lxml import etree
 
 from django.core.mail import send_mail
 from django.template import loader
@@ -29,4 +30,10 @@ def generate_code():
 #     html_message = loader.get_template('User Manage/change_password_email.html').render(data)
 #     send_mail(subject=subject, message="", html_message=html_message, from_email=from_email, recipient_list=recipient_list)
 
+def cut_content(text):
+    response = etree.HTML(text=text)
+    text = response.xpath('string(.)')
+    if len(text) > 90 :
+        return text[:90] + ' ...'
+    return text
 

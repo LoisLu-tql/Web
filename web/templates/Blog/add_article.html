@@ -41,8 +41,6 @@
 
     </script>
 
-
-
 {% endblock %}
 
 {% block content %}
@@ -57,7 +55,7 @@
             <p>请输入内容..</p>
         </div>
         <textarea name="content" id="text1" style="display:none"></textarea>
-        <span>添加标签,让你的文章被更多人看到!</span> <br>
+        <span>添加到分区,让你的文章被更多人看到!</span> <br>
         <span>学科区</span><br>
         <input type="checkbox" value="1" name="item" onClick="onCheckBox(this)">高等数学
         <input type="checkbox" value="2" name="item" onClick="onCheckBox(this)">线性代数
@@ -72,6 +70,9 @@
         <input type="checkbox" value="9" name="item" onClick="onCheckBox(this)">经济管理
         <input type="checkbox" value="10" name="item" onClick="onCheckBox(this)">材料与环境
         <br>
+        <hr>
+        为文章添加专属标签,可使文章更容易被搜索到哦~ :
+        <input type="text" name="tag2"> <br>
         <button>发布</button>
         {#        <input type="button" id="submit_button" value="提交">#}
     </form>
@@ -83,7 +84,7 @@
     {##}
     {#    </ul>#}
     {#    <span id="backout">撤销</span> <br>#}
-    <span>我的标签:</span>
+    <span>我的分区:</span>
     <ul id="ulabels">
         {% for label in userlabels %}
             <li class="userlabels not_selected">
@@ -94,7 +95,7 @@
 
     {# 添加新的个人标签 #}
     <input type="text" id="label_name" name="label_name"> <br>
-    <button id="add_label_button" name="add_label_button">添加标签</button>
+    <button id="add_label_button" name="add_label_button">添加分区</button>
     <div id="add_label_info"></div>
 
 {% endblock %}

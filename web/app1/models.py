@@ -26,6 +26,7 @@ class Article(models.Model):  # 博客文章 #时间-梯度 访问人数/10 作�
     read_num = models.IntegerField(null=True, default=0)
     author = models.ForeignKey(Person, null=True)
     tag = models.ForeignKey(ArticleTag, null=True)
+    tag2 = models.CharField(max_length=64, blank=True)  # 标签 用于搜索
     hot = models.DecimalField(decimal_places=4, max_digits=10, null=True, default=0)
 
 class ReadArticle(models.Model):
