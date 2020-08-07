@@ -72,6 +72,15 @@ class DiscussionResponse(models.Model):   # 帖子回复
     owner = models.ForeignKey(Person)
     add_time = models.DateTimeField(auto_now_add=True)
 
+class DiscussionResponseResponse(models.Model):   #回复帖子回复
+    discussion = models.ForeignKey(Discussion, null=True)
+    comment = models.ForeignKey(DiscussionResponse, null=True)
+    comment_res = models.ForeignKey('self', null=True, verbose_name='DRR')
+    content = HTMLField()
+    owner = models.ForeignKey(Person)
+    add_time = models.DateTimeField(auto_now_add=True)
+    type = models.IntegerField(default=0)                    #0-回复 1-回复回复
+
 class LikeDiscussionResponse(models.Model):
     comment_id = models.IntegerField()
     fan_id = models.IntegerField()
@@ -88,11 +97,13 @@ class MarkDiscussion(models.Model):   # 帖子-收藏
 class Notice(models.Model):
     receiver_id = models.IntegerField()
     sender = models.ForeignKey(Person, null=True)
-    message_type = models.IntegerField() #0-博客点赞 1-博客评论 2-问题回答 3-赞同答案 4-关注
+    message_type = models.IntegerField() #0-博客点赞 1-博客评论 2-问题回答 3-赞同答案 4-关注 5-回复答案 6-回复答案回复
     article = models.ForeignKey(Article, null=True)
     article_comment = models.ForeignKey(ArticleComment, null=True)
     discussion = models.ForeignKey(Discussion, null=True)
     discussion_response = models.ForeignKey(DiscussionResponse, null=True)
+    discussion_res_res = models.ForeignKey(DiscussionResponseResponse, null=True, related_name='res')
+    discussion_R_R = models.ForeignKey(DiscussionResponseResponse, null=True, related_name='res_res')
     have_read = models.IntegerField(default=0)
 
 # class BlogLabel(models.Model):

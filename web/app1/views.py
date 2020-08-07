@@ -20,7 +20,7 @@ from django.utils import timezone
 
 from app1.models import Article, Person, Likes, Discussion, LikeArticle, MarkArticle, ArticleComment, LikeDiscussion, \
     MarkDiscussion, DiscussionResponse, LikeDiscussionResponse, Notice, BlogLabel, DiscussionLabel, UserLabel, \
-    UserBlogLabel, ReadArticle, ChatRoom, ChatContent
+    UserBlogLabel, ReadArticle, ChatRoom, ChatContent, DiscussionResponseResponse
 from app1.tools import get_color, generate_code, cut_content
 from search_engine.tools import delete_htmltag
 from web1 import settings
@@ -242,7 +242,7 @@ def add_article(request):
                 blog_label.have_label = blog_label.have_label // 2
             while len(s) > 0:
                 binstring = binstring + str(s.pop())
-            print(binstring)
+            #print(binstring)
             if binstring:
                 blog_label.have_label = int(binstring)
             else :
@@ -568,9 +568,9 @@ def blogs(request, order_type):
     random_range = len(blogs)
     aim_id = random.randint(1, random_range)
 
-    for blog in blogs :
-        print("blog tag:")
-        print(blog.tag2)
+    # for blog in blogs :
+    #     print("blog tag:")
+    #     print(blog.tag2)
 
     data = {
         'blogs': blogs,
@@ -654,6 +654,11 @@ def show_discussion(request, discussion_id, order_type):
     else:
         comments = DiscussionResponse.objects.filter(discussion=discussion).order_by('-likes_num')
 
+    comment_responses = []
+
+    for comment in comments:
+        comment_responses[1:1] = DiscussionResponseResponse.objects.filter(comment=comment)
+
     data = {
         'title': discussion.title,
         'discussion': discussion,
@@ -661,6 +666,7 @@ def show_discussion(request, discussion_id, order_type):
         'is_author': is_author,
         'user': Person.objects.get(name=username),
         'comments': comments,
+        'comment_responses': comment_responses,
     }
     try:
         discussion_label = DiscussionLabel.objects.get(discussion_id=discussion.id)
@@ -1415,3 +1421,69 @@ def uncollect_discussion(request, discussion_id):
     relation = MarkDiscussion.objects.filter(Q(discussion_id=discussion_id) & Q(fan_id=user.id))
     relation.delete()
     return redirect(reverse('app1:my_collected_discussions'))
+
+
+def res_dis_res(request, comment_id, type, discussion_id):
+    if type == '0':
+        username = request.session.get('username')
+        if not username:
+            return render(request, 'Page Jump/notlogin_to_login.html')
+
+        user = Person.objects.get(name=username)
+
+        if request.method == 'GET':
+            return render(
+                request, 'Discussion/add_comment_response.html', {'comment_id': comment_id, 'type': 0, 'discussion_id': discussion_id})
+        elif request.method == 'POST':
+            comment = DiscussionResponse.objects.get(id=comment_id)
+            comment_res = DiscussionResponseResponse()
+            comment_res.discussion = comment.discussion
+            comment_res.owner = user
+            comment_res.type = 0
+            comment_res.comment = comment
+            comment_res.content = request.POST.get('content')
+            comment_res.save()
+            message = Notice()
+            message.message_type = 5
+            message.receiver_id = comment.owner.id
+            message.sender = user
+            message.discussion = comment.discussion
+            message.discussion_response = comment
+            message.discussion_res_res = comment_res
+            message.save()
+
+            return redirect(
+                reverse('app1:show_discussion', kwargs={'discussion_id': discussion_id, 'order_type': '0'}))
+
+    else:
+        username = request.session.get('username')
+        if not username:
+            return render(request, 'Page Jump/notlogin_to_login.html')
+
+        user = Person.objects.get(name=username)
+
+        if request.method == 'GET':
+            return render(
+                request, 'Discussion/add_comment_response.html', {'comment_id': comment_id, 'type': 1, 'discussion_id': discussion_id})
+        elif request.method == 'POST':
+            belong_discussion = Discussion.objects.get(id=discussion_id)
+            commentR = DiscussionResponseResponse.objects.get(id=comment_id)
+            comment_res = DiscussionResponseResponse()
+            comment_res.discussion = belong_discussion
+            comment_res.owner = user
+            comment_res.type = 1
+            comment_res.comment = commentR.comment
+            comment_res.comment_res = commentR
+            comment_res.content = request.POST.get('content')
+            comment_res.save()
+            message = Notice()
+            message.message_type = 6
+            message.receiver_id = commentR.owner.id
+            message.sender = user
+            message.discussion = belong_discussion
+            message.discussion_res_res = commentR
+            message.discussion_R_R = comment_res
+            message.save()
+
+            return redirect(
+                reverse('app1:show_discussion', kwargs={'discussion_id': discussion_id, 'order_type': '0'}))

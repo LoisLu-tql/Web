@@ -29,8 +29,8 @@ def is_cde(ch):
 # 用标点符号和空格为文段分段,分段之间以' '连接
 def make_subsection(text):
     text = text.replace('&nbsp;',' ')
-    print(len(text))
-    print(text)
+    #print(len(text))
+    #print(text)
     res = ''
     for i in range(len(text)):
         if is_cde(text[i]):
@@ -41,8 +41,8 @@ def make_subsection(text):
         while i < len(text) and (not is_cde(text[i]) ):
             i += 1
     res = ' '.join(res.split())
-    print(len(res))
-    print(res)
+    #print(len(res))
+    #print(res)
 
     return res
 

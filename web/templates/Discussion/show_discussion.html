@@ -21,7 +21,7 @@
         <span id="like" star_id="{{ discussion.owner.id }}" fan_id="{{ user.id }}">关注提问者</span> &nbsp;
         <span id="recommend" discussion_id="{{ discussion.id }}" fan_id="{{ user.id }}" >赞</span> &nbsp;
         <span id="mark" discussion_id="{{ discussion.id }}" fan_id="{{ user.id }}" >收藏</span> &nbsp;
-        <span>{{ discussion.comments_num }}回复</span>
+        <span>{{ discussion.comments_num }}评论</span>
         <br> <span id="AttentionHint"></span>
     {% endif %}
 
@@ -42,10 +42,43 @@
                 <div>
                     <span><a href="{% url 'app1:his_home' comment.owner.id %}">{{ comment.owner.name }}</a></span>
                     <br>
-                    <p>{{ comment.content }}</p>{{ comment.likes_num }}
+                    <p>{{ comment.content }}</p>
+
+                    {% for comment_response in comment_responses %}
+                        {% if comment_response.comment == comment %}
+                            {% if comment_response.type == 0 %}
+                                &nbsp;&nbsp;&nbsp;&nbsp;
+                                <a href="{% url 'app1:his_home' comment_response.owner.id %}" style="display: inline; color: dimgray">
+                                    {{ comment_response.owner.name }}
+                                </a>
+                                <p style="display: inline; color: #999999">:{{ comment_response.content }}</p>
+                                &nbsp;&nbsp;&nbsp;&nbsp;
+                                <h6 style="display: inline; color: #999999">{{ comment_response.add_time }}</h6>
+                                <a href="{% url 'app1:res_dis_res' comment_response.id 1 discussion.id %}" style="display: inline; color: #999999">回复</a>
+                                <br>
+                            {% else %}
+                                &nbsp;&nbsp;&nbsp;&nbsp;
+                                <a href="{% url 'app1:his_home' comment_response.owner.id %}" style="display: inline; color: dimgray">
+                                    {{ comment_response.owner.name }}
+                                </a>回复了
+                                <a href="{% url 'app1:his_home' comment_response.comment_res.owner.id %}" style="display: inline; color: dimgray">
+                                    {{ comment_response.comment_res.owner.name }}
+                                </a>
+                                <p style="display: inline; color: #999999">:{{ comment_response.content }}</p>
+                                &nbsp;&nbsp;&nbsp;&nbsp;
+                                <h6 style="display: inline; color: #999999">{{ comment_response.add_time }}</h6>
+                                <a href="{% url 'app1:res_dis_res' comment_response.id 1 discussion.id %}" style="display: inline; color: #999999">回复</a>
+                                <br>
+                            {% endif %}
+                        {% endif %}
+                    {% endfor %}
+
+                    {{ comment.likes_num }}
                     <a href="{% url 'app1:recommend_discussion_response' comment.id user.id %}">
                         点赞
                     </a>&nbsp;&nbsp;
+                    <a href="{% url 'app1:res_dis_res' comment.id 0 discussion.id %}">回复</a>&nbsp;&nbsp;&nbsp;
+
                     {% if user.id == comment.owner.id  %}
                         <span><a href="{% url 'app1:delete_comment' comment.id %}">删除评论</a></span>
                     {% endif %}

@@ -121,6 +121,8 @@ urlpatterns = [
 
     url(r'^uncollectdiscussion/(?P<discussion_id>\d+)/', views.uncollect_discussion, name='uncollect_discussion'),
 
+    url(r'^resdisres/(?P<comment_id>\d+)/(?P<type>\d+)/(?P<discussion_id>\d+)/', views.res_dis_res, name='res_dis_res'),
+
     # url(r'^refreshlabel/', views.refresh_label, name = 'refresh_label'),
 
     url(r'^$', views.index, name='index'),

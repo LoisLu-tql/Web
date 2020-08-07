@@ -75,7 +75,7 @@ def search_blog_by_str(sstring):
     article_list1 = article_list1.order_by('-hot')
     # article_list2 = article_list2.order_by('-hot')
 
-    print(len(article_list1))
+    #print(len(article_list1))
     # print(len(article_list2))
     articles = []
     for article in article_list1:

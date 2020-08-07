@@ -3,35 +3,66 @@
 {% block content %}
     <form action="{% url 'app1:message_box' %}" method="post">
         {% csrf_token %}
-        <div><button>已读</button></div><hr>
+        <div>
+            <button>已读</button>
+        </div>
+        <hr>
     </form>
     <div>
-    {% for message in messages %}
-        {% if message.message_type == 4 %}
-            {% if message.have_read == 0 %}NEW!{% endif %}
-            <a href="{% url 'app1:his_home' message.sender.id %}">{{ message.sender.name }}</a> 关注了你!<hr>
-        {% elif message.message_type == 3 %}
-            {% if message.have_read == 0 %}NEW!{% endif %}
-            <a href="{% url 'app1:his_home' message.sender.id %}">{{ message.sender.name }}</a> 为你在问题
-            <a href="{% url 'app1:show_discussion' message.discussion.id 0 %}">{{ message.discussion.title }}</a> 中的回复
-            "{{ message.discussion_response.content }}" 点赞了!<hr>
-        {% elif message.message_type == 2 %}
-            {% if message.have_read == 0 %}NEW!{% endif %}
-            <a href="{% url 'app1:his_home' message.sender.id %}">{{ message.sender.name }}</a> 回答了你的问题
-            <a href="{% url 'app1:show_discussion' message.discussion.id 0 %}">{{ message.discussion.title }}</a>
-            "{{ message.discussion_response.content }}" !<hr>
-        {% elif message.message_type == 1 %}
-            {% if message.have_read == 0 %}NEW!{% endif %}
-            <a href="{% url 'app1:his_home' message.sender.id %}">{{ message.sender.name }}</a> 在你的博客
-            <a href="{% url 'app1:show_article' message.article.id %}">{{ message.article.title }}</a> 下评论
-            "{{ message.article_comment.content }}" 了!<hr>
-        {% elif message.message_type == 0 %}
-            {% if message.have_read == 0 %}NEW!{% endif %}
-            <a href="{% url 'app1:his_home' message.sender.id %}">{{ message.sender.name }}</a> 给你的博客
-            <a href="{% url 'app1:show_article' message.article.id %}">{{ message.article.title }}</a> 点赞了!<hr>
-        {% endif %}
-    {% empty %}
-        <h4>暂时没有消息哦~</h4>
-    {% endfor %}
+        {% for message in messages %}
+
+
+            {% if message.message_type == 0 %}
+                {% if message.have_read == 0 %}NEW!{% endif %}
+                <a href="{% url 'app1:his_home' message.sender.id %}">{{ message.sender.name }}</a> 给你的博客
+                <a href="{% url 'app1:show_article' message.article.id %}">{{ message.article.title }}</a> 点赞了!
+                <hr>
+            {% elif message.message_type == 1 %}
+                {% if message.have_read == 0 %}NEW!{% endif %}
+                <a href="{% url 'app1:his_home' message.sender.id %}">{{ message.sender.name }}</a> 在你的博客
+                <a href="{% url 'app1:show_article' message.article.id %}">{{ message.article.title }}</a> 下评论了<br>
+                "{{ message.article_comment.content }}"
+                <hr>
+            {% elif message.message_type == 2 %}
+                {% if message.have_read == 0 %}NEW!{% endif %}
+                <a href="{% url 'app1:his_home' message.sender.id %}">{{ message.sender.name }}</a> 回答了你的问题
+                <a href="{% url 'app1:show_discussion' message.discussion.id 0 %}">{{ message.discussion.title }}</a>
+                <br>
+                "{{ message.discussion_response.content }}"
+                <hr>
+            {% elif message.message_type == 3 %}
+                {% if message.have_read == 0 %}NEW!{% endif %}
+                <a href="{% url 'app1:his_home' message.sender.id %}">{{ message.sender.name }}</a> 为你在问题
+                <a href="{% url 'app1:show_discussion' message.discussion.id 0 %}">{{ message.discussion.title }}</a>
+                中的回复
+                "{{ message.discussion_response.content }}" 点赞了!
+                <hr>
+            {% elif message.message_type == 4 %}
+                {% if message.have_read == 0 %}NEW!{% endif %}
+                <a href="{% url 'app1:his_home' message.sender.id %}">{{ message.sender.name }}</a> 关注了你!
+                <hr>
+            {% elif message.message_type == 5 %}
+                {% if message.have_read == 0 %}NEW!{% endif %}
+                <a href="{% url 'app1:his_home' message.sender.id %}">{{ message.sender.name }}</a> 回复了你在问题
+                <a href="{% url 'app1:show_discussion' message.discussion.id 0 %}">{{ message.discussion.title }}</a>
+                中的回复
+                "{{ message.discussion_response.content }}"<br>
+                "{{ message.discussion_res_res.content }}"
+                <hr>
+            {% elif message.message_type == 6 %}
+                {% if message.have_read == 0 %}NEW!{% endif %}
+                <a href="{% url 'app1:his_home' message.sender.id %}">{{ message.sender.name }}</a> 回复了你在问题
+                <a href="{% url 'app1:show_discussion' message.discussion.id 0 %}">{{ message.discussion.title }}</a>
+                中的回复
+                "{{ message.discussion_res_res.content }}"<br>
+                "{{ message.discussion_R_R.content }}"
+                <hr>
+
+
+            {% endif %}
+
+        {% empty %}
+            <h4>暂时没有消息哦~</h4>
+        {% endfor %}
     </div>
 {% endblock %}
